@@ -4,11 +4,11 @@
 
 class Point {
     int x, y;
-    int getX();
-    int getY();
 
   public:
     Point(int, int);
+    int getX();
+    int getY();
     friend std::istream& operator>>(std::istream&, Point&);
     friend std::ostream& operator<<(std::ostream&, Point&);
 };

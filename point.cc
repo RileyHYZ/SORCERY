@@ -3,7 +3,7 @@
 
 using namespace std;
 
-// Private Methods
+// Public Methods
 
 // Accessors
 
@@ -15,9 +15,11 @@ int Point::getY() {
     return y;
 }
 
-// Public Methods
+// Constructor
 
 Point::Point(int x, int y) : x{x}, y{y} {}
+
+// Overloaded Input/Output Operators
 
 istream& operator>>(istream& in, Point& p) {
 

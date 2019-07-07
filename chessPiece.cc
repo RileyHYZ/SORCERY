@@ -8,7 +8,7 @@ ChessPiece::ChessPiece(Color c) : color{c} {}
 
 ChessPiece::~ChessPiece() {}
 
-bool ChessPiece::checkValidMove(Point curPos, Point newPos) {
+bool ChessPiece::checkValidMove(Point& curPos, Point& newPos) {
     return isValidMove(curPos, newPos);
 }
 
@@ -16,7 +16,7 @@ bool ChessPiece::checkValidMove(Point curPos, Point newPos) {
 
 Pawn::Pawn(Color c) : ChessPiece{c} {}
 		
-bool Pawn::isValidMove(Point curPos, Point newPos) {
+bool Pawn::isValidMove(Point& curPos, Point& newPos) {
 
 }
 
@@ -25,7 +25,7 @@ bool Pawn::isValidMove(Point curPos, Point newPos) {
 
 Knight::Knight(Color c) : ChessPiece{c} {}
 
-bool Knight::isValidMove(Point curPos, Point newPos) {
+bool Knight::isValidMove(Point& curPos, Point& newPos) {
 
 }
 
@@ -33,7 +33,7 @@ bool Knight::isValidMove(Point curPos, Point newPos) {
 
 Bishop::Bishop(Color c) : ChessPiece{c} {}
 
-bool Bishop::isValidMove(Point curPos, Point newPos) {
+bool Bishop::isValidMove(Point& curPos, Point& newPos) {
 
 }
 
@@ -41,7 +41,7 @@ bool Bishop::isValidMove(Point curPos, Point newPos) {
 
 Rook::Rook(Color c) : ChessPiece{c} {}
 
-bool Rook::isValidMove(Point curPos, Point newPos) {
+bool Rook::isValidMove(Point& curPos, Point& newPos) {
 
 }
 
@@ -49,7 +49,7 @@ bool Rook::isValidMove(Point curPos, Point newPos) {
 
 King::King(Color c) : ChessPiece{c} {}
 
-bool King::isValidMove(Point curPos, Point newPos) {
+bool King::isValidMove(Point& curPos, Point& newPos) {
 
 }
 
@@ -57,6 +57,6 @@ bool King::isValidMove(Point curPos, Point newPos) {
 
 Queen::Queen(Color c) : ChessPiece{c} {}
 
-bool Queen::isValidMove(Point curPos, Point newPos) {
+bool Queen::isValidMove(Point& curPos, Point& newPos) {
 
 }
