@@ -1,10 +1,10 @@
-#ifndef __OBJECT_H__
-#define __OBJECT_H__
+#ifndef _OBSERVER_H_
+#define _OBSERVER_H_
 
 class Observer {
-	public:
-		virtual void notify()=0;
-		virtual ~Observer()=0;
+  public:
+    virtual void notify() = 0;
+    virtual ~Observer();
 };
 
 #endif

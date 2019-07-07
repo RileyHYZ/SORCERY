@@ -1,39 +1,52 @@
 #ifndef __CHESSPIECE_H__
 #define __CHESSPIECE_H__
-#include "Point.h"
+#include "point.h"
+#include "color.h"
 
 class ChessPiece {
-    Color color;
-		virtual bool isValidMove(Point curPos, Point newPos);//chesspiece cannot be a pure virtual
+		Color color;
+		virtual bool isValidMove(Point, Point) = 0;
 
 	public:
 		ChessPiece(Color); 
-		bool checkValidMove(Point curPos, Point newPos);
+		virtual ~ChessPiece();
+		bool checkValidMove(Point, Point);
 };
 
-class Pawn {
+class Pawn : ChessPiece {
 	public:
-		bool isValidMove(Point curPos, Point newPos);
+		Pawn(Color);
+		bool isValidMove(Point, Point) override;
 };
-class Knight {
+
+class Knight : ChessPiece {
 	public:
-		bool isValidMove(Point curPos, Point newPos);
+		Knight(Color);
+		bool isValidMove(Point, Point) override;
 };
-class Bishop {
+
+class Bishop : ChessPiece {
 	public:
-		bool isValidMove(Point curPos, Point newPos);
+		Bishop(Color);
+		bool isValidMove(Point, Point) override;
 };
-class Rook {
+
+class Rook : ChessPiece {
 	public:
-		bool isValidMove(Point curPos, Point newPos);
+		Rook(Color);
+		bool isValidMove(Point, Point) override;
 };
-class King {
+
+class King : ChessPiece {
 	public:
-		bool isValidMove(Point curPos, Point newPos);
+		King(Color);
+		bool isValidMove(Point, Point) override;
 };
-class Queen {
+
+class Queen : ChessPiece {
 	public:
-		bool isValidMove(Point curPos, Point newPos);
+		Queen(Color);
+		bool isValidMove(Point, Point) override;
 };
 
 #endif
