@@ -13,37 +13,37 @@ class ChessPiece {
 		bool checkValidMove(Point&, Point&);
 };
 
-class Pawn : ChessPiece {
+class Pawn : public ChessPiece {
 	public:
 		Pawn(Color);
 		bool isValidMove(Point&, Point&) override;
 };
 
-class Knight : ChessPiece {
+class Knight : public ChessPiece {
 	public:
 		Knight(Color);
 		bool isValidMove(Point&, Point&) override;
 };
 
-class Bishop : ChessPiece {
+class Bishop : public ChessPiece {
 	public:
 		Bishop(Color);
 		bool isValidMove(Point&, Point&) override;
 };
 
-class Rook : ChessPiece {
+class Rook : public ChessPiece {
 	public:
 		Rook(Color);
 		bool isValidMove(Point&, Point&) override;
 };
 
-class King : ChessPiece {
+class King : public ChessPiece {
 	public:
 		King(Color);
 		bool isValidMove(Point&, Point&) override;
 };
 
-class Queen : ChessPiece {
+class Queen : public ChessPiece {
 	public:
 		Queen(Color);
 		bool isValidMove(Point&, Point&) override;
