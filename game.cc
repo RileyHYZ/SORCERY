@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Game::Game() {}
+Game::Game() : chessBoard{ChessBoard()}, curPlayer{WHITE} {}
 
 bool Game::playTurn() {
 
