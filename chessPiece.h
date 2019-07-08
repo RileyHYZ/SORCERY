@@ -38,9 +38,12 @@ class Rook : public ChessPiece {
 };
 
 class King : public ChessPiece {
+		int HP;
 	public:
 		King(Color);
 		bool isValidMove(Point&, Point&) override;
+		void addHP();
+		void minusHP();
 };
 
 class Queen : public ChessPiece {

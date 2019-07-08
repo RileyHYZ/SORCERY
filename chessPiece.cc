@@ -47,10 +47,20 @@ bool Rook::isValidMove(Point& curPos, Point& newPos) {
 
 // King
 
-King::King(Color c) : ChessPiece{c} {}
+King::King(Color c) : ChessPiece{c} {
+    HP = 2;
+}
 
 bool King::isValidMove(Point& curPos, Point& newPos) {
 
+}
+
+void King::addHP() {
+    HP ++;
+}
+
+void King::minusHP() {
+    HP --;
 }
 
 // Queen
