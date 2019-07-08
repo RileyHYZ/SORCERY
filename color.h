@@ -3,7 +3,8 @@
 
 enum Color {
     BLACK, 
-    WHITE
+    WHITE,
+    UNDEF
 };
 
 #endif
