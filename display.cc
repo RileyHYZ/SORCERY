@@ -54,12 +54,14 @@ void TextDisplay::notify() {
             }   
         }
 
+        out << '|';
+
         if (square.getPiece() != nullptr) {
             out << square.getPiece()->getDisplayIcon();
         } else if (square.getColor() == BLACK) {
-            out << "| ";
+            out << " ";
         } else {
-            out << "|\u2588";
+            out << "\u2588";
         }
 
         if (col == 7) {
