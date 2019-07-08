@@ -5,16 +5,6 @@
 #include <algorithm>
 #include <random>
 
-// Constructor
-
-ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8} {
-    initPieces(WHITE, board, pieces);
-    initPawns(WHITE, board, pieces);
-    initCards(board);
-    initPawns(BLACK, board, pieces);
-    initPieces(BLACK, board, pieces);
-}
-
 void initPawns(Color color, std::vector<std::vector<Square> >& board,
                 std::vector<std::unique_ptr<ChessPiece> >& pieces) {
     std::vector<Square> boardRow;
@@ -100,8 +90,16 @@ void initCards(std::vector<std::vector<Square> >& board) {
         board.emplace_back(cards);
         cards.clear();
     }
-    
+}
 
+// Constructor
+
+ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8} {
+    initPieces(WHITE, board, pieces);
+    initPawns(WHITE, board, pieces);
+    initCards(board);
+    initPawns(BLACK, board, pieces);
+    initPieces(BLACK, board, pieces);
 }
 
 // Public Methods
@@ -111,7 +109,7 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
 }
 
 bool ChessBoard::checkStandstill() {
-
+    
 }
 
 void ChessBoard::applyCardAt(Point& pos) {
