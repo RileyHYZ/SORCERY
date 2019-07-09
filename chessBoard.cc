@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <random>
 
+using namespace std;
+
 void initPawns(Color color, std::vector<std::vector<Square> >& board,
                 std::vector<std::unique_ptr<ChessPiece> >& pieces) {
     std::vector<Square> boardRow;
@@ -93,8 +95,6 @@ void initCards(std::vector<std::vector<Square> >& board) {
         cards.clear();
     }
 }
-
-using namespace std;
 
 // Constructor
 
