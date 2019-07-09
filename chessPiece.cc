@@ -12,6 +12,10 @@ bool ChessPiece::checkValidMove(Point& curPos, Point& newPos) {
     return isValidMove(curPos, newPos);
 }
 
+Color ChessPiece::getColor() {
+    return color;
+}
+
 // Pawn
 
 Pawn::Pawn(Color c) : ChessPiece{c} {}

@@ -8,7 +8,8 @@ class ChessPiece {
 		virtual bool isValidMove(Point&, Point&) = 0;
 
 	public:
-		ChessPiece(Color); 
+		ChessPiece(Color);
+		Color getColor(); 
 		virtual ~ChessPiece();
 		bool checkValidMove(Point&, Point&);
 };
@@ -38,8 +39,11 @@ class Rook : public ChessPiece {
 };
 
 class King : public ChessPiece {
+		int hp;
 	public:
 		King(Color);
+		int getHP();
+		void setHP(int);
 		bool isValidMove(Point&, Point&) override;
 };
 
