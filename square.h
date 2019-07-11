@@ -17,6 +17,8 @@ class Square {
     ChessPiece* getPiece();
     Card getCard();
     Color getColor();
+    void setPiece(ChessPiece*);
+    void setCard(Card);
 };
 
 #endif
