@@ -41,11 +41,16 @@ TextDisplay::~TextDisplay() {
 void TextDisplay::notify() {
     ChessBoard* board = getSubject()->getChessBoard();
     int col = 0;
+    int row = 8;
 
     int whiteKingHP = 0;
     int blackKingHP = 0;
 
     for (Square& square : *board) {
+        if (col == 0) {
+            out << row << " ";
+            --row;
+        }
         if (King* k = dynamic_cast<King*>(square.getPiece())) {
             if (k->getColor() == WHITE) {
                 whiteKingHP = k->getHP();
@@ -71,6 +76,7 @@ void TextDisplay::notify() {
             ++col;
         }
     }
+    out << "   A B C D E F G H" << endl;
 
     out << "The white player's king has " << whiteKingHP << " HP." << endl;
     out << "The black player's king has " << blackKingHP << " HP." << endl;
