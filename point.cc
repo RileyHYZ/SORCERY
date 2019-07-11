@@ -22,9 +22,16 @@ Point::Point(int x, int y) : x{x}, y{y} {}
 // Overloaded Input/Output Operators
 
 istream& operator>>(istream& in, Point& p) {
+    int rank;
+    char file;
+    in >> file >> rank;
 
+    p.x = rank - 1;
+    p.y = file - 'a';
+
+    return in;
 }
 
 ostream& operator<<(ostream& out, Point& p) {
-
+    return out << char(p.y + 'a') << p.x + 1 << endl;
 }

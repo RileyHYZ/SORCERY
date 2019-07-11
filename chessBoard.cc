@@ -72,7 +72,7 @@ void initCards(std::vector<std::vector<Square> >& board) {
 
 // Constructor
 
-ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8} {
+ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, defaultPromotionPiece{'Q'} {
     vector<vector<Square> > tmp;
     board = tmp;
 
@@ -91,6 +91,10 @@ ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8} {
 }
 
 // Public Methods
+
+void ChessBoard::setDefaultPromotionPiece(char d) {
+    defaultPromotionPiece = d;
+}
 
 void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
 

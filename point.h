@@ -6,7 +6,7 @@ class Point {
     int x, y;
 
   public:
-    Point(int, int);
+    Point(int = 0, int = 0);
     int getX();
     int getY();
     friend std::istream& operator>>(std::istream&, Point&);
