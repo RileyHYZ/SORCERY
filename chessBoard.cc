@@ -1,56 +1,42 @@
-#include <vector>
-
 #include "chessBoard.h"
 #include "point.h"
 #include "color.h"
 #include <numeric>
 #include <algorithm>
 #include <random>
+#include <vector>
 
-void initPawns(Color color, std::vector<std::vector<Square> >& board,
-                std::vector<std::unique_ptr<ChessPiece> >& pieces) {
-    std::vector<Square> boardRow;
-    for(int i = 0; i < 8; i++) {
-        Pawn pawn{color};
-        Square sq{&pawn, NONE, color};
-        boardRow.emplace_back(sq);
-        pieces.emplace_back(std::make_unique<Pawn>(pawn));
-    }
-    board.emplace_back(boardRow);
-}
+using namespace std;
 
-void initPieces(Color color, std::vector<std::vector<Square> >& board,
+void initPieces(std::vector<std::vector<Square> >& board,
                 std::vector<std::unique_ptr<ChessPiece> >& pieces) {
-    std::vector<Square> boardRow;
-    for(int i = 0; i < 8; i++) {
-        if (i == 0 || i == 7) {
-            Rook rook{color};
-            Square sq {&rook, NONE, color};
-            boardRow.emplace_back(sq);
-            pieces.emplace_back(std::make_unique<Rook>(rook));
-        } else if (i == 1 || i == 6) {
-            Knight knight{color};
-            Square sq {&knight, NONE, color};
-            boardRow.emplace_back(sq);
-            pieces.emplace_back(std::make_unique<Knight>(knight));
-        } else if (i == 2 || i == 5) {
-            Bishop bishop{color};
-            Square sq {&bishop, NONE, color};
-            boardRow.emplace_back(sq);
-            pieces.emplace_back(std::make_unique<Bishop>(bishop));
-        } else if (i == 3) {
-            Queen queen{color};
-            Square sq {&queen, NONE, color};
-            boardRow.emplace_back(sq);
-            pieces.emplace_back(std::make_unique<Queen>(queen));
-        } else {
-            King king{color};
-            Square sq {&king, NONE, color};
-            boardRow.emplace_back(sq);
-            pieces.emplace_back(std::make_unique<King>(king));
+    for(int i = 0; i < 2; i++) {
+        for(int j = 0; j < 8; j++) {
+            Pawn *pawn = new Pawn{i == 0 ? BLACK : WHITE};
+            board[i == 0 ? 1 : 6][j].setPiece(pawn);
+            if (j == 0 || j == 7) {
+                Rook* rook = new Rook{i == 0 ? BLACK:WHITE};
+                board[i == 0 ? 0 : 7][j].setPiece(rook);
+                pieces.emplace_back(std::make_unique<Rook>(*rook));
+            } else if (j == 1 || j == 6) {
+                Knight* knight = new Knight{i == 0 ? BLACK : WHITE};
+                board[i == 0 ? 0 : 7][j].setPiece(knight);
+                pieces.emplace_back(std::make_unique<Knight>(*knight));
+            } else if (j == 2 || j == 5) {
+                Bishop* bishop = new Bishop{i == 0 ? BLACK : WHITE};
+                board[i == 0 ? 0 : 7][j].setPiece(bishop);
+                pieces.emplace_back(std::make_unique<Bishop>(*bishop));
+            } else if (j == 3) {
+                Queen* queen = new Queen{i == 0 ? BLACK : WHITE};
+                board[i == 0 ? 0 : 7][j].setPiece(queen);
+                pieces.emplace_back(std::make_unique<Queen>(*queen));
+            } else {
+                King* king = new King{i == 0 ? BLACK : WHITE};
+                board[i == 0 ? 0 : 7][j].setPiece(king);
+                pieces.emplace_back(std::make_unique<King>(*king));
+            }
         }
     }
-    board.emplace_back(boardRow);
 }
 
 void initCards(std::vector<std::vector<Square> >& board) {
@@ -60,50 +46,48 @@ void initCards(std::vector<std::vector<Square> >& board) {
     std::shuffle(rand.begin(), rand.end(), rng);
 
     int ind = 0;
-    std::vector<Square> cards;
-    for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 8; i++) {
+    for (int i = 2; i < 6; i++) {
+        for (int j = 0; j < 8; j++) {
             if (rand[ind] < 4) {
-                Square sq{nullptr, PLUSONEHP, UNDEF};
-                cards.emplace_back(sq);
+                board[i][j].setCard(PLUSONEHP);
             } else if(rand[ind] >= 4 && rand[ind] < 7) {
-                Square sq{nullptr, DESTRUCTION, UNDEF};
-                cards.emplace_back(sq);
+                board[i][0].setCard(DESTRUCTION);
             } else if(rand[ind] >= 7 && rand[ind] < 13) {
-                Square sq{nullptr, ENCHANTMENT, UNDEF};
-                cards.emplace_back(sq);
+                board[i][0].setCard(ENCHANTMENT);
             } else if(rand[ind] >= 13 && rand[ind] < 22) {
-                Square sq{nullptr, BLANK, UNDEF};
-                cards.emplace_back(sq);
+                board[i][0].setCard(BLANK);
             } else if(rand[ind] >= 22 && rand[ind] < 27) {
-                Square sq{nullptr, FIRECOLUMN, UNDEF};
-                cards.emplace_back(sq);
+                board[i][0].setCard(FIRECOLUMN);
             } else if(rand[ind] >= 27 && rand[ind] < 29) {
-                Square sq{nullptr, MOAT, UNDEF};
-                cards.emplace_back(sq);
+                board[i][0].setCard(MOAT);
             } else if(rand[ind] >= 29 && rand[ind] < 31) {
-                Square sq{nullptr, CURSE, UNDEF};
-                cards.emplace_back(sq);
+                board[i][0].setCard(CURSE);
             } else {
-                Square sq{nullptr, RESURRECTION, UNDEF};
-                cards.emplace_back(sq);
+                board[i][0].setCard(RESURRECTION);
             }
+            ind++;
         }
-        board.emplace_back(cards);
-        cards.clear();
     }
 }
-
-using namespace std;
 
 // Constructor
 
 ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8} {
-    initPieces(WHITE, board, pieces);
-    initPawns(WHITE, board, pieces);
+    vector<vector<Square> > tmp;
+    board = tmp;
+
+    for (int i = 0; i < NUM_ROWS; ++i) {
+        vector<Square> v;
+        
+        for (int j = 0; j < NUM_COLS; ++j) {
+            Square s{nullptr, NONE, (i + j) % 2 == 0 ? BLACK : WHITE};
+            v.emplace_back(s);
+        }
+
+        board.emplace_back(v);
+    }
+    initPieces(board, pieces);
     initCards(board);
-    initPawns(BLACK, board, pieces);
-    initPieces(BLACK, board, pieces);
 }
 
 // Public Methods
