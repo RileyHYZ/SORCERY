@@ -11,7 +11,6 @@ class ChessPiece {
 		
 	public:
 		ChessPiece(Color); 
-		Color getColor();
 		virtual ~ChessPiece();
 
 		Color getColor();

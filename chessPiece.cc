@@ -30,63 +30,48 @@ char Pawn::displayIcon() {
 		
 bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
     if(capture) {
-        return abs(curPos.getX - newPos.getX) == 1 &&
-                    abs(curPos.getY - curPos.getY) == 1;
+        return abs(curPos.getX() - newPos.getX()) == 1 &&
+                    abs(curPos.getY() - curPos.getY()) == 1;
     }
-    bool forwardOne = getColor() == WHITE ? newPos.getY == curPos.getY - 1 :
-                    newPos.getY == curPos.getY + 1;
-    return curPos.getX == newPos.getX && forwardOne; 
+    bool forwardOne = getColor() == WHITE ? newPos.getY() == curPos.getY() - 1 :
+                    newPos.getY() == curPos.getY() + 1;
+    return curPos.getX() == newPos.getX() && forwardOne; 
 }
 
 // Knight
 
 Knight::Knight(Color c) : ChessPiece{c} {}
 
-<<<<<<< HEAD
 bool Knight::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
-    return abs(curPos.getX - newPos.getX) + abs(curPos.getY - newPos.getY) == 3;
-=======
-char Knight::displayIcon() {
-    return getColor() == WHITE ? 'n' : 'N';
+    return abs(curPos.getX() - newPos.getX()) + abs(curPos.getY() - newPos.getY()) == 3;
 }
 
-bool Knight::isValidMove(Point& curPos, Point& newPos) {
-
->>>>>>> ce8c2c6dcc96a5715866f3cb9cda26784a8984d5
+char Knight::displayIcon() {
+    return getColor() == WHITE ? 'n' : 'N';
 }
 
 // Bishop
 
 Bishop::Bishop(Color c) : ChessPiece{c} {}
 
-<<<<<<< HEAD
 bool Bishop::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
-    return abs(curPos.getX - newPos.getX) == abs(curPos.getY - curPos.getY);
-=======
-char Bishop::displayIcon() {
-    return getColor() == WHITE ? 'b' : 'B';
+    return abs(curPos.getX() - newPos.getX()) == abs(curPos.getY() - curPos.getY());
 }
 
-bool Bishop::isValidMove(Point& curPos, Point& newPos) {
-
->>>>>>> ce8c2c6dcc96a5715866f3cb9cda26784a8984d5
+char Bishop::displayIcon() {
+    return getColor() == WHITE ? 'b' : 'B';
 }
 
 // Rook
 
 Rook::Rook(Color c) : ChessPiece{c} {}
 
-<<<<<<< HEAD
 bool Rook::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
-    return curPos.getX == newPos.getX || curPos.getY == newPos.getY;
-=======
-char Rook::displayIcon() {
-    return getColor() == WHITE ? 'r' : 'R';
+    return curPos.getX() == newPos.getX() || curPos.getY() == newPos.getY();
 }
 
-bool Rook::isValidMove(Point& curPos, Point& newPos) {
-
->>>>>>> ce8c2c6dcc96a5715866f3cb9cda26784a8984d5
+char Rook::displayIcon() {
+    return getColor() == WHITE ? 'r' : 'R';
 }
 
 // King
@@ -113,17 +98,12 @@ bool King::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
 
 Queen::Queen(Color c) : ChessPiece{c} {}
 
-<<<<<<< HEAD
 bool Queen::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
-    return abs(curPos.getX - newPos.getX) == abs(curPos.getY - curPos.getY)
-                    || curPos.getX == newPos.getX
-                    || curPos.getY == newPos.getY;
-=======
-char Queen::displayIcon() {
-    return getColor() == WHITE ? 'q' : 'Q';
+    return abs(curPos.getX() - newPos.getX()) == abs(curPos.getY() - curPos.getY())
+                    || curPos.getX() == newPos.getX()
+                    || curPos.getY() == newPos.getY();
 }
 
-bool Queen::isValidMove(Point& curPos, Point& newPos) {
-
->>>>>>> ce8c2c6dcc96a5715866f3cb9cda26784a8984d5
+char Queen::displayIcon() {
+    return getColor() == WHITE ? 'q' : 'Q';
 }
