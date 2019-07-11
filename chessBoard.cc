@@ -12,26 +12,26 @@ void initPieces(std::vector<std::vector<Square> >& board,
                 std::vector<std::unique_ptr<ChessPiece> >& pieces) {
     for(int i = 0; i < 2; i++) {
         for(int j = 0; j < 8; j++) {
-            Pawn *pawn = new Pawn{i == 0 ? BLACK : WHITE};
+            Pawn *pawn = new Pawn{i == 1 ? BLACK : WHITE};
             board[i == 0 ? 1 : 6][j].setPiece(pawn);
             if (j == 0 || j == 7) {
-                Rook* rook = new Rook{i == 0 ? BLACK:WHITE};
+                Rook* rook = new Rook{i == 1 ? BLACK:WHITE};
                 board[i == 0 ? 0 : 7][j].setPiece(rook);
                 pieces.emplace_back(std::make_unique<Rook>(*rook));
             } else if (j == 1 || j == 6) {
-                Knight* knight = new Knight{i == 0 ? BLACK : WHITE};
+                Knight* knight = new Knight{i == 1 ? BLACK : WHITE};
                 board[i == 0 ? 0 : 7][j].setPiece(knight);
                 pieces.emplace_back(std::make_unique<Knight>(*knight));
             } else if (j == 2 || j == 5) {
-                Bishop* bishop = new Bishop{i == 0 ? BLACK : WHITE};
+                Bishop* bishop = new Bishop{i == 1 ? BLACK : WHITE};
                 board[i == 0 ? 0 : 7][j].setPiece(bishop);
                 pieces.emplace_back(std::make_unique<Bishop>(*bishop));
             } else if (j == 3) {
-                Queen* queen = new Queen{i == 0 ? BLACK : WHITE};
+                Queen* queen = new Queen{i == 1 ? BLACK : WHITE};
                 board[i == 0 ? 0 : 7][j].setPiece(queen);
                 pieces.emplace_back(std::make_unique<Queen>(*queen));
             } else {
-                King* king = new King{i == 0 ? BLACK : WHITE};
+                King* king = new King{i == 1 ? BLACK : WHITE};
                 board[i == 0 ? 0 : 7][j].setPiece(king);
                 pieces.emplace_back(std::make_unique<King>(*king));
             }

@@ -33,9 +33,9 @@ bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
         return abs(curPos.getX() - newPos.getX()) == 1 &&
                     abs(curPos.getY() - curPos.getY()) == 1;
     }
-    bool forwardOne = getColor() == WHITE ? newPos.getY() == curPos.getY() - 1 :
-                    newPos.getY() == curPos.getY() + 1;
-    return curPos.getX() == newPos.getX() && forwardOne; 
+    bool forwardOne = getColor() == WHITE ? newPos.getX() == curPos.getX() - 1 :
+                    newPos.getX() == curPos.getX() + 1;
+    return curPos.getY() == newPos.getY() && forwardOne; 
 }
 
 // Knight
