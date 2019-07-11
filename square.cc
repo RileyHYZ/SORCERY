@@ -23,6 +23,17 @@ Color Square::getColor() {
     return color;
 }
 
+void Square::setPiece(ChessPiece* chessPiece) {
+    if(piece != nullptr) {
+        delete piece;
+    }
+    piece = chessPiece;
+}
+
+void Square::setCard(Card c) {
+    card = c;
+}
+
 // Constructor
 
 // this will change depending on how you want to initialize the board, if 
