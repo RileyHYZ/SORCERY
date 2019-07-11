@@ -1,4 +1,4 @@
-CXX = g++-5
+CXX = g++
 CXXFLAGS = -std=c++14 -Wall -MMD
 EXEC = main
 OBJECTS = main.o chessBoard.o chessPiece.o display.o game.o observer.o point.o square.o subject.o
