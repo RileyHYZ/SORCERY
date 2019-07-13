@@ -6,6 +6,7 @@
 #include "subject.h"
 #include "chessBoard.h"
 #include "color.h"
+#include "point.h"
 
 class Game : public Subject {
     std::unique_ptr<ChessBoard> chessBoard;
@@ -18,7 +19,9 @@ class Game : public Subject {
     ChessBoard* getChessBoard();
     Card getLastCardApplied();
 
-		bool playTurn();
+    void setDefaultPromotionPiece(char);
+
+		bool playTurn(Point&, Point&);
 };
 
 #endif

@@ -23,11 +23,10 @@ Color Square::getColor() {
     return color;
 }
 
-void Square::setPiece(ChessPiece* chessPiece) {
-    if(piece != nullptr) {
-        delete piece;
-    }
-    piece = chessPiece;
+// Mutators
+
+void Square::setPiece(ChessPiece* p) {
+    piece = p;
 }
 
 void Square::setCard(Card c) {
