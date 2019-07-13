@@ -15,7 +15,7 @@ class ChessBoard {
     std::vector<std::unique_ptr<ChessPiece> > pieces;
     std::vector<char> defaultPromotionPieces; // white at 0, black at 1
 
-    void initPieces();
+    void initPieces(Color);
     void initCards();
 
   public:

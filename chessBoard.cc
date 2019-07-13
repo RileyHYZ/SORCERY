@@ -9,41 +9,37 @@
 
 using namespace std;
 
-void ChessBoard::initPieces() {
-    for(int i = 0; i < 2; i++) {
-        for(int j = 0; j < 8; j++) {
-            Pawn *pawn = new Pawn{i == 1 ? BLACK : WHITE};
-            board[i == 0 ? 1 : 6][j].setPiece(pawn);
-            if (j == 0 || j == 7) {
-                Rook* rook = new Rook{i == 1 ? BLACK:WHITE};
-                board[i == 0 ? 0 : 7][j].setPiece(rook);
-                pieces.emplace_back(std::make_unique<Rook>(*rook));
-            } else if (j == 1 || j == 6) {
-                Knight* knight = new Knight{i == 1 ? BLACK : WHITE};
-                board[i == 0 ? 0 : 7][j].setPiece(knight);
-                pieces.emplace_back(std::make_unique<Knight>(*knight));
-            } else if (j == 2 || j == 5) {
-                Bishop* bishop = new Bishop{i == 1 ? BLACK : WHITE};
-                board[i == 0 ? 0 : 7][j].setPiece(bishop);
-                pieces.emplace_back(std::make_unique<Bishop>(*bishop));
-            } else if (j == 3) {
-                Queen* queen = new Queen{i == 1 ? BLACK : WHITE};
-                board[i == 0 ? 0 : 7][j].setPiece(queen);
-                pieces.emplace_back(std::make_unique<Queen>(*queen));
-            } else {
-                King* king = new King{i == 1 ? BLACK : WHITE};
-                board[i == 0 ? 0 : 7][j].setPiece(king);
-                pieces.emplace_back(std::make_unique<King>(*king));
-            }
+void ChessBoard::initPieces(Color c) {
+    for(int i = 0; i < 8; i++) {
+        // Initialize pawn
+        pieces.emplace_back(make_unique<Pawn>(c));
+        board.at(c == WHITE ? 1 : 6).at(i).setPiece(pieces.back().get());
+
+        // Initialize piece
+        if (i == 0 || i == 7) {
+            pieces.emplace_back(make_unique<Rook>(c));
+            board.at(c == WHITE ? 0 : 7).at(i).setPiece(pieces.back().get());
+        } else if (i == 1 || i == 6) {
+            pieces.emplace_back(make_unique<Knight>(c));
+            board.at(c == WHITE ? 0 : 7).at(i).setPiece(pieces.back().get());    
+        } else if (i == 2 || i == 5) {
+            pieces.emplace_back(make_unique<Bishop>(c));
+            board.at(c == WHITE ? 0 : 7).at(i).setPiece(pieces.back().get());              
+        } else if (i == 3) {               
+            pieces.emplace_back(make_unique<Queen>(c));
+            board.at(c == WHITE ? 0 : 7).at(i).setPiece(pieces.back().get());
+        } else {
+            pieces.emplace_back(make_unique<King>(c));
+            board.at(c == WHITE ? 0 : 7).at(i).setPiece(pieces.back().get());
         }
     }
 }
 
 void ChessBoard::initCards() {
-    std::vector<int> rand(32);
-    std::iota(rand.begin(), rand.end(), 1);
-    auto rng = std::default_random_engine {};
-    std::shuffle(rand.begin(), rand.end(), rng);
+    vector<int> rand(32);
+    iota(rand.begin(), rand.end(), 1);
+    auto rng = default_random_engine {};
+    shuffle(rand.begin(), rand.end(), rng);
 
     int ind = 0;
     for (int i = 2; i < 6; i++) {
@@ -86,7 +82,8 @@ ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, defaultPromotionPieces{vect
 
         board.emplace_back(v);
     }
-    initPieces();
+    initPieces(WHITE);
+    initPieces(BLACK);
     initCards();
 }
 
@@ -139,6 +136,12 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
         int newHP = k->getHP() - 1;
         k->setHP(newHP);
     } else {
+        for (int i = 0; i < pieces.size(); ++i) {
+            if (pieces.at(i).get() == capturedPiece) {
+                pieces.erase(pieces.begin() + i);
+                break;
+            }
+        }
         board.at(newPos.getX()).at(newPos.getY()).setPiece(piece);
     }   
 
