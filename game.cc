@@ -29,7 +29,25 @@ void Game::setDefaultPromotionPiece(char piece) {
 
 bool Game::playTurn(Point& curPos, Point& newPos) {
     chessBoard->makeMove(curPos, newPos, curPlayer);
+    lastCardApplied = chessBoard->getCardAt(newPos);
+    switch (lastCardApplied) {
+        case CURSE:
+            chessBoard->updateHP(curPlayer == WHITE ? BLACK : WHITE, -1);
+            break;
+        case PLUSONEHP:
+            chessBoard->updateHP(curPlayer, 1);
+            break;
+        case FIRECOLUMN:
+        case MOAT:
+        case DESTRUCTION:
+        case RESURRECTION:
+            chessBoard->applyCardAt(curPlayer, newPos);
+            break;
+        default:
+            break;
+    }
+    chessBoard->setCardAt(newPos, NONE);
     notifyObservers();
-    curPlayer = curPlayer == WHITE ? BLACK : WHITE;
+    if (!(lastCardApplied == ENCHANTMENT)) curPlayer = curPlayer == WHITE ? BLACK : WHITE;
     return false;
 }

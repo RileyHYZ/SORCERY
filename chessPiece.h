@@ -62,12 +62,9 @@ class Rook : public ChessPiece {
 };
 
 class King : public ChessPiece {
-		int hp;
 	public:
 		King(Color);
 		char displayIcon() override;
-		int getHP();
-		void setHP(int);
 		std::vector<Point> piecePath(Point&, Point&);
 		bool isValidMove(Point&, Point&, bool) override;
 };

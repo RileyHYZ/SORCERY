@@ -153,18 +153,10 @@ vector<Point> Rook::piecePath(Point& curPos, Point& newPos) {
 
 // King
 
-King::King(Color c) : ChessPiece{c}, hp{2} {}
+King::King(Color c) : ChessPiece{c} {}
 
 char King::displayIcon() {
     return getColor() == WHITE ? 'k' : 'K';
-}
-
-int King::getHP() {
-    return hp;
-}
-
-void King::setHP(int newHP) {
-    hp = newHP;
 }
 
 bool King::isValidMove(Point& curPos, Point& newPos, bool cap = false) {

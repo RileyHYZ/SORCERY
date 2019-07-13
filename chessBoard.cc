@@ -47,28 +47,41 @@ void ChessBoard::initCards() {
             if (rand[ind] < 4) {
                 board[i][j].setCard(PLUSONEHP);
             } else if(rand[ind] >= 4 && rand[ind] < 7) {
-                board[i][0].setCard(DESTRUCTION);
+                board[i][j].setCard(DESTRUCTION);
             } else if(rand[ind] >= 7 && rand[ind] < 13) {
-                board[i][0].setCard(ENCHANTMENT);
+                board[i][j].setCard(ENCHANTMENT);
             } else if(rand[ind] >= 13 && rand[ind] < 22) {
-                board[i][0].setCard(BLANK);
+                board[i][j].setCard(BLANK);
             } else if(rand[ind] >= 22 && rand[ind] < 27) {
-                board[i][0].setCard(FIRECOLUMN);
+                board[i][j].setCard(FIRECOLUMN);
             } else if(rand[ind] >= 27 && rand[ind] < 29) {
-                board[i][0].setCard(MOAT);
+                board[i][j].setCard(MOAT);
             } else if(rand[ind] >= 29 && rand[ind] < 31) {
-                board[i][0].setCard(CURSE);
+                board[i][j].setCard(CURSE);
             } else {
-                board[i][0].setCard(RESURRECTION);
+                board[i][j].setCard(RESURRECTION);
             }
             ind++;
+        }
+    }
+    board[2][4].setCard(FIRECOLUMN);
+}
+
+void ChessBoard::removePieceAt(Square& s) {
+    if (s.getPiece() == nullptr) return;
+
+    for (int i = 0; i < pieces.size(); ++i) {
+        if (pieces.at(i).get() == s.getPiece()) {
+            pieces.erase(pieces.begin() + i);
+            s.setPiece(nullptr);
+            break;
         }
     }
 }
 
 // Constructor
 
-ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, defaultPromotionPieces{vector<char>{2, 'q'}} {
+ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, hp{vector<int>{2, 2}}, defaultPromotionPieces{vector<char>{2, 'q'}} {
     vector<vector<Square> > tmp;
     board = tmp;
 
@@ -87,7 +100,24 @@ ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, defaultPromotionPieces{vect
     initCards();
 }
 
-// Public Methods
+// Accessors
+vector<int> ChessBoard::getHP() {
+    return hp;
+}
+
+Card ChessBoard::getCardAt(Point& p) {
+    return board.at(p.getX()).at(p.getY()).getCard();
+}
+
+// Mutators
+
+void ChessBoard::setCardAt(Point& p, Card c) {
+    board.at(p.getX()).at(p.getY()).setCard(c);
+}
+
+void ChessBoard::updateHP(Color player, int amount) {
+    hp.at(player) += amount;
+}
 
 void ChessBoard::setDefaultPromotionPiece(Color player, char piece) { 
     piece = tolower(piece);
@@ -98,6 +128,8 @@ void ChessBoard::setDefaultPromotionPiece(Color player, char piece) {
 
     defaultPromotionPieces.at(player) = piece;
 }
+
+// Public Methods
 
 void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
     // Check if same position
@@ -128,22 +160,20 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
     }
 
     // Do the move
-    board.at(curPos.getX()).at(curPos.getY()).setPiece(nullptr);
 
     // If King is captured, decrease HP; else move the piece
     // If piece captures the King, it's removed from the game
-    if (King* k = dynamic_cast<King*>(capturedPiece)) {
-        int newHP = k->getHP() - 1;
-        k->setHP(newHP);
+    if (dynamic_cast<King*>(capturedPiece)) {
+        hp.at(player) -= 1;
+        removePieceAt(board.at(curPos.getX()).at(curPos.getY()));
     } else {
-        for (int i = 0; i < pieces.size(); ++i) {
-            if (pieces.at(i).get() == capturedPiece) {
-                pieces.erase(pieces.begin() + i);
-                break;
-            }
-        }
+        // Remove captured piece
+        removePieceAt(board.at(newPos.getX()).at(newPos.getY()));
+
+        // Move the piece
+        board.at(curPos.getX()).at(curPos.getY()).setPiece(nullptr);
         board.at(newPos.getX()).at(newPos.getY()).setPiece(piece);
-    }   
+    }
 
     // Pawn promotion
     if (dynamic_cast<Pawn*>(piece) && (player == BLACK && newPos.getX() == 0 || player == WHITE && newPos.getX() == NUM_ROWS - 1)) {
@@ -171,8 +201,54 @@ bool ChessBoard::checkStandstill() {
     
 }
 
-void ChessBoard::applyCardAt(Point& pos) {
+void ChessBoard::applyCardAt(Color player, Point& pos) {
+    Card c = board.at(pos.getX()).at(pos.getY()).getCard();
 
+    switch (c) {
+        case FIRECOLUMN:
+            {
+                int increment = player == WHITE ? 1 : -1;
+                int end = player == WHITE ? NUM_ROWS : -1;
+                for (int i = pos.getX() + increment; i != end; i += increment) {
+                    if (dynamic_cast<King*>(board.at(i).at(pos.getY()).getPiece())) {
+                        hp.at(player == WHITE ? BLACK : WHITE) -= 1;
+                    } else {
+                        removePieceAt(board.at(i).at(pos.getY()));
+                    }
+                }
+            }
+            break;
+        case MOAT:
+            for (int i = 0; i < NUM_COLS; ++i) {
+                removePieceAt(board.at(pos.getX()).at(i));
+            }
+            break;
+        case DESTRUCTION:
+            for (int i = pos.getX() - 1; i <= pos.getX() + 1; ++i) {
+                if (i < 0 || i >= NUM_ROWS) continue;
+
+                for (int j = pos.getY() - 1; j <= pos.getY() + 1; ++j) {
+                    if (j < 0 || j >= NUM_COLS) continue;
+
+                    if (!(i == pos.getX() && j == pos.getY())) removePieceAt(board.at(i).at(j));
+                }
+            }
+            break;
+        case RESURRECTION:
+            for (vector<Square> &v : board) {
+                for (Square &s : v) {
+                    if (s.getPiece() != nullptr && s.getPiece()->getColor() == player) {
+                        // Erase piece from vector and board
+                        removePieceAt(s);
+                    }
+                }
+            }
+            // Reinitialize pieces for that player
+            initPieces(player);
+            break;
+        default:
+            break;
+    }
 }
 
 // Iterator
