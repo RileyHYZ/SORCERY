@@ -9,7 +9,7 @@ using namespace std;
 
 // Constructor
 
-Game::Game() : chessBoard{make_unique<ChessBoard>()}, curPlayer{WHITE}, lastCardApplied{NONE} {}
+Game::Game() : chessBoard{make_unique<ChessBoard>()}, curPlayer{WHITE}, lastCardApplied{NONE}, winner{UNDEF}, tie{false} {}
 
 // Accessors
 
@@ -21,9 +21,20 @@ Card Game::getLastCardApplied() {
     return lastCardApplied;
 }
 
+Color Game::getWinner() {
+    return winner;
+}
+
+bool Game::isTie() {
+    return tie;
+}
+
 // Public Methods
 
-bool Game::playTurn() {
+bool Game::playTurn(Point& curPos, Point& newPos, Color curPlayer) {
+    chessBoard->makeMove(curPos, newPos, curPlayer);
+    notifyObservers();
+    curPlayer = curPlayer == WHITE ? BLACK : WHITE;
     return checkWin();
 }
 
@@ -34,8 +45,10 @@ bool Game::checkWin() {
         return true;
     }
     if(chessBoard->checkStandstill()) {
-        if (chessBoard->getPlayerHp(opponent) > chessBoard->getPlayerHp(curPlayer)){
+        if (chessBoard->getPlayerHp(opponent) > chessBoard->getPlayerHp(curPlayer)) {
             winner = opponent;
+        } else if (chessBoard->getPlayerHp(opponent) == chessBoard->getPlayerHp(curPlayer)) {
+            tie = true;
         } else {
             winner = curPlayer;
         }

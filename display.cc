@@ -84,4 +84,11 @@ void TextDisplay::notify() {
     if (getSubject()->getLastCardApplied() != NONE) {
         out << "The card that was played in this term was " << getSubject()->getLastCardApplied();
     }
+    if (getSubject()->getWinner() == WHITE) {
+        out << "The white player wins!" << endl;
+    } else if (getSubject()->getWinner() == BLACK) {
+        out << "The black player wins!" << endl;
+    } else if (getSubject()->isTie()) {
+        out << "The game ends in a tie." << endl;
+    }
 }

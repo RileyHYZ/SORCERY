@@ -113,7 +113,7 @@ bool diagMoveIsLegal(std::vector<std::vector<Square> >& board, int i, int j, int
 }
 
 bool ChessBoard::checkStandstill() {
-    int w, b = 0;
+    int w = 0, b = 0;
     if (pieces.size() == 4) {
         for (int i = 0; i < 4; i++) {
             if(pieces[i]->getType() == "pawn") {
@@ -129,7 +129,7 @@ bool ChessBoard::checkStandstill() {
                     if (cp1 != nullptr && cp2 != nullptr) {
                         if (cp1->getType() == "pawn" && cp2->getType() == "pawn") {
                             return !diagMoveIsLegal(board, i, j, NUM_COLS)
-                                            || !diagMoveIsLegal(board, i + 1, j, NUM_COLS);
+                                            && !diagMoveIsLegal(board, i + 1, j, NUM_COLS);
                         }
                     }
                 }

@@ -11,16 +11,20 @@ class Game : public Subject {
     std::unique_ptr<ChessBoard> chessBoard;
 		Color curPlayer;
     Color winner;
-    bool checkWin();
     Card lastCardApplied;
+    bool tie;
+
+    bool checkWin();
 
   public:
     Game();
 
     ChessBoard* getChessBoard();
     Card getLastCardApplied();
+    Color getWinner();
 
-		bool playTurn();
+    bool isTie();
+		bool playTurn(Point&, Point&, Color);
 };
 
 #endif
