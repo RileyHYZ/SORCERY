@@ -5,6 +5,7 @@
 
 class ChessPiece {
 		Color color;
+		std::string type;
 
 		virtual char displayIcon() = 0;
 		virtual bool isValidMove(Point&, Point&, bool) = 0;
@@ -13,8 +14,12 @@ class ChessPiece {
 		ChessPiece(Color);
 		virtual ~ChessPiece();
 
+		void setType(std::string);
+
+		std::string getType();
 		Color getColor();
 		char getDisplayIcon();
+		
 
 		bool checkValidMove(Point&, Point&, bool);
 };

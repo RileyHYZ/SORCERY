@@ -100,8 +100,43 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
 
 }
 
+bool diagMoveIsLegal(std::vector<std::vector<Square> >& board, int i, int j, int col) {
+    bool legal = false;
+    Color color = board[i][j].getPiece()->getColor();
+    if (j > 0 && board[i][j - 1].getPiece() != nullptr) {
+        legal = board[i][j - 1].getPiece()->getColor() == color;
+    }
+    if (j < col - 1 && board[i][j + 1].getPiece() != nullptr) {
+        return legal || board[i][j + 1].getPiece()->getColor() == color;
+    }
+    return legal;
+}
+
 bool ChessBoard::checkStandstill() {
-    
+    int w, b = 0;
+    if (pieces.size() == 4) {
+        for (int i = 0; i < 4; i++) {
+            if(pieces[i].get()->getType() == "pawn") {
+                if (pieces[i].get()->getColor() == WHITE) w ++;
+                else b ++;
+            }
+        }
+        if (w == b == 1) {
+            for (int i = 0; i < NUM_ROWS - 1; i ++) {
+                for (int j = 0; j < NUM_COLS; j ++) {
+                    ChessPiece *cp1 = board[i][j].getPiece();
+                    ChessPiece *cp2 = board[i + 1][j].getPiece();
+                    if (cp1 != nullptr && cp2 != nullptr) {
+                        if (cp1->getType() == "pawn" && cp2->getType() == "pawn") {
+                            return !diagMoveIsLegal(board, i, j, NUM_COLS)
+                                            || !diagMoveIsLegal(board, i + 1, j, NUM_COLS);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
 }
 
 void ChessBoard::applyCardAt(Point& pos) {
