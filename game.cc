@@ -29,12 +29,12 @@ bool Game::playTurn() {
 
 bool Game::checkWin() {
     Color opponent = curPlayer == WHITE ? BLACK : WHITE;
-    if(!chessBoard.get()->getPlayerHp(opponent) || !chessBoard.get()->armyIsAlive(opponent)){
+    if(!chessBoard->getPlayerHp(opponent) || !chessBoard->armyIsAlive(opponent)){
         winner = curPlayer;
         return true;
     }
-    if(chessBoard.get()->checkStandstill()) {
-        if (chessBoard.get()->getPlayerHp(opponent) > chessBoard.get()->getPlayerHp(curPlayer)){
+    if(chessBoard->checkStandstill()) {
+        if (chessBoard->getPlayerHp(opponent) > chessBoard->getPlayerHp(curPlayer)){
             winner = opponent;
         } else {
             winner = curPlayer;

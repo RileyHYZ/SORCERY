@@ -8,6 +8,14 @@ ChessPiece::ChessPiece(Color c) : color{c} {}
 
 ChessPiece::~ChessPiece() {}
 
+void ChessPiece::setType(std::string type) {
+    this->type = type;
+}
+
+std::string ChessPiece::getType() {
+    return type;
+}
+
 Color ChessPiece::getColor() {
      return color;
 }
@@ -22,7 +30,9 @@ bool ChessPiece::checkValidMove(Point& curPos, Point& newPos, bool capture = fal
 
 // Pawn
 
-Pawn::Pawn(Color c) : ChessPiece{c} {}
+Pawn::Pawn(Color c) : ChessPiece{c} {
+    setType("pawn");
+}
 
 char Pawn::displayIcon() {
     return getColor() == WHITE ? 'p' : 'P';
@@ -40,7 +50,9 @@ bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
 
 // Knight
 
-Knight::Knight(Color c) : ChessPiece{c} {}
+Knight::Knight(Color c) : ChessPiece{c} {
+    setType("knight");
+}
 
 bool Knight::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return abs(curPos.getX() - newPos.getX()) + abs(curPos.getY() - newPos.getY()) == 3;
@@ -52,7 +64,9 @@ char Knight::displayIcon() {
 
 // Bishop
 
-Bishop::Bishop(Color c) : ChessPiece{c} {}
+Bishop::Bishop(Color c) : ChessPiece{c} {
+    setType("bishop");
+}
 
 bool Bishop::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return abs(curPos.getX() - newPos.getX()) == abs(curPos.getY() - curPos.getY());
@@ -64,7 +78,9 @@ char Bishop::displayIcon() {
 
 // Rook
 
-Rook::Rook(Color c) : ChessPiece{c} {}
+Rook::Rook(Color c) : ChessPiece{c} {
+    setType("rook");
+}
 
 bool Rook::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return curPos.getX() == newPos.getX() || curPos.getY() == newPos.getY();
@@ -76,7 +92,9 @@ char Rook::displayIcon() {
 
 // King
 
-King::King(Color c) : ChessPiece{c}, hp{2} {}
+King::King(Color c) : ChessPiece{c}, hp{2} {
+    setType("king");
+}
 
 char King::displayIcon() {
     return getColor() == WHITE ? 'k' : 'K';
@@ -96,7 +114,9 @@ bool King::isValidMove(Point& curPos, Point& newPos, bool capture) {
 
 // Queen
 
-Queen::Queen(Color c) : ChessPiece{c} {}
+Queen::Queen(Color c) : ChessPiece{c} {
+    setType("queen");
+}
 
 bool Queen::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
     return abs(curPos.getX() - newPos.getX()) == abs(curPos.getY() - newPos.getY())

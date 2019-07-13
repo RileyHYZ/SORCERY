@@ -116,8 +116,8 @@ bool ChessBoard::checkStandstill() {
     int w, b = 0;
     if (pieces.size() == 4) {
         for (int i = 0; i < 4; i++) {
-            if(pieces[i].get()->getType() == "pawn") {
-                if (pieces[i].get()->getColor() == WHITE) w ++;
+            if(pieces[i]->getType() == "pawn") {
+                if (pieces[i]->getColor() == WHITE) w ++;
                 else b ++;
             }
         }
@@ -146,7 +146,7 @@ void ChessBoard::applyCardAt(Point& pos) {
 bool ChessBoard::armyIsAlive(Color color) {
     int count = 0;
     for(std::unique_ptr<ChessPiece>& cp: pieces) {
-        if(cp.get()->getColor() == color) {
+        if(cp->getColor() == color) {
             count++;
         }
         if(count >= 2) return true;
@@ -165,6 +165,7 @@ int ChessBoard::getPlayerHp(Color color) {
     }
     return k->getHP();
 }
+
 // Iterator
 
 ChessBoard::Iterator::Iterator(std::vector<std::vector<Square> > board, int curRow, int curCol, int numCols) \
