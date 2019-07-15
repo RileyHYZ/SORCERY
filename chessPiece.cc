@@ -12,11 +12,11 @@ ChessPiece::ChessPiece(Color c) : color{c} {}
 
 ChessPiece::~ChessPiece() {}
 
-void ChessPiece::setType(std::string type) {
+void ChessPiece::setType(string type) {
     this->type = type;
 }
 
-std::string ChessPiece::getType() {
+string ChessPiece::getType() {
     return type;
 }
 
