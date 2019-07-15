@@ -85,11 +85,10 @@ vector<Point> ChessPiece::getDiagonalPath(Point& curPos, Point& newPos) {
     return v;
 }
 
-bool isDiagonalMove(Point &curPos, Point &newPos, bool capture) {
-    return (capture && abs(curPos.getX() - newPos.getX()) == 1 &&
-                    abs(curPos.getY() - newPos.getY()) == 1) 
-                    || (!capture && abs(curPos.getX() - newPos.getX()) 
-                        == abs(curPos.getY() - newPos.getY()));
+bool isDiagonalMove(Point& curPos, Point& newPos, int diff = 0) {
+    int xDiff = abs(newPos.getX() - curPos.getX());
+    int yDiff = abs(newPos.getY() - curPos.getY());
+    return diff == 0 ? xDiff == yDiff : xDiff == diff && yDiff == diff;
 }
 
 // Pawn
@@ -103,9 +102,9 @@ char Pawn::displayIcon() {
 }
 		
 bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
-    bool forwardOne = getColor() == WHITE ? newPos.getX() == curPos.getX() + 1 :
-                    newPos.getX() == curPos.getX() - 1;
-    return isDiagonalMove(curPos, newPos, capture) || (curPos.getY() == newPos.getY() && forwardOne); 
+    int incr = getColor() == WHITE ? 1 : -1;
+    bool forwardOne = newPos.getX() == curPos.getX() + incr && newPos.getY() == curPos.getY();
+    return (capture && isDiagonalMove(curPos, newPos, 1)) || forwardOne; 
 }
 
 vector<Point> Pawn::piecePath(Point& curPos, Point& newPos) {
@@ -137,7 +136,7 @@ Bishop::Bishop(Color c) : ChessPiece{c} {
 }
 
 bool Bishop::isValidMove(Point& curPos, Point& newPos, bool capture) {
-    return isDiagonalMove(curPos, newPos, capture);
+    return isDiagonalMove(curPos, newPos);
 }
 
 char Bishop::displayIcon() {
@@ -195,7 +194,7 @@ Queen::Queen(Color c) : ChessPiece{c} {
 }
 
 bool Queen::isValidMove(Point& curPos, Point& newPos, bool capture) {
-    return isDiagonalMove(curPos, newPos, capture)
+    return isDiagonalMove(curPos, newPos)
                     || curPos.getX() == newPos.getX()
                     || curPos.getY() == newPos.getY();
 }
