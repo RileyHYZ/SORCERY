@@ -19,6 +19,16 @@ int Point::getY() {
 
 Point::Point(int x, int y) : x{x}, y{y} {}
 
+// Overloaded Equality/Inequality Operators
+
+bool Point::operator==(Point& p) {
+    return x == p.x && y == p.y;
+}
+
+bool Point::operator!=(Point& p) {
+    return !(*this == p);
+}
+
 // Overloaded Input/Output Operators
 
 istream& operator>>(istream& in, Point& p) {

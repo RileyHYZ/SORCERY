@@ -9,16 +9,19 @@
 #include "color.h"
 
 class ChessBoard {
-    const int NUM_ROWS;//if row and col are always 8 why do we still need these
+    const int NUM_ROWS;
     const int NUM_COLS;
     std::vector<std::vector<Square> > board;
     std::vector<std::unique_ptr<ChessPiece> > pieces;
-    char defaultPromotionPiece;
+    std::vector<char> defaultPromotionPieces; // white at 0, black at 1
+
+    void initPieces(Color);
+    void initCards();
 
   public:
     ChessBoard();
 
-    void setDefaultPromotionPiece(char);
+    void setDefaultPromotionPiece(Color, char);
 
 		void makeMove(Point&, Point&, Color);
 		bool checkStandstill();

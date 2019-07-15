@@ -23,6 +23,13 @@ Card Game::getLastCardApplied() {
 
 // Public Methods
 
-bool Game::playTurn() {
+void Game::setDefaultPromotionPiece(char piece) {
+    chessBoard->setDefaultPromotionPiece(curPlayer, piece);
+}
 
+bool Game::playTurn(Point& curPos, Point& newPos) {
+    chessBoard->makeMove(curPos, newPos, curPlayer);
+    notifyObservers();
+    curPlayer = curPlayer == WHITE ? BLACK : WHITE;
+    return false;
 }
