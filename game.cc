@@ -33,9 +33,17 @@ bool Game::isTie() {
 
 bool Game::playTurn(Point& curPos, Point& newPos, Color curPlayer) {
     chessBoard->makeMove(curPos, newPos, curPlayer);
+
+    // Check for winner
+    bool gameEnded = checkWin();
+
+    // Notify observers to display screen
     notifyObservers();
+
+    // Switch player
     curPlayer = curPlayer == WHITE ? BLACK : WHITE;
-    return checkWin();
+
+    return gameEnded;
 }
 
 bool Game::checkWin() {
