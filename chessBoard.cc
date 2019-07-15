@@ -143,28 +143,28 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
             }
         }
         board.at(newPos.getX()).at(newPos.getY()).setPiece(piece);
-    }   
 
-    // Pawn promotion
-    if (dynamic_cast<Pawn*>(piece) && (player == BLACK && newPos.getX() == 0 || player == WHITE && newPos.getX() == NUM_ROWS - 1)) {
-        unique_ptr<ChessPiece> cp;
-        switch (defaultPromotionPieces.at(player)) {
-            case 'q':
-                cp = make_unique<Queen>(player);
-                break;
-            case 'n':
-                cp = make_unique<Knight>(player);
-                break;
-            case 'b':
-                cp = make_unique<Bishop>(player);
-                break;
-            case 'r':
-                cp = make_unique<Rook>(player);
-                break;
+        // Pawn promotion
+        if (dynamic_cast<Pawn*>(piece) && (player == BLACK && newPos.getX() == 0 || player == WHITE && newPos.getX() == NUM_ROWS - 1)) {
+            unique_ptr<ChessPiece> cp;
+            switch (defaultPromotionPieces.at(player)) {
+                case 'q':
+                    cp = make_unique<Queen>(player);
+                    break;
+                case 'n':
+                    cp = make_unique<Knight>(player);
+                    break;
+                case 'b':
+                    cp = make_unique<Bishop>(player);
+                    break;
+                case 'r':
+                    cp = make_unique<Rook>(player);
+                    break;
+            }
+            board.at(newPos.getX()).at(newPos.getY()).setPiece(cp.get());
+            pieces.push_back(move(cp));
         }
-        board.at(newPos.getX()).at(newPos.getY()).setPiece(cp.get());
-        pieces.push_back(move(cp));
-    }
+    }   
 }
 
 bool ChessBoard::checkStandstill() {
