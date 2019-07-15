@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "game.h"
-#include "display.h"
+#include "output.h"
 #include "point.h"
 
 using namespace std;
@@ -9,6 +9,7 @@ using namespace std;
 int main(void) {
     Game g;
     TextDisplay t{&g, cout};
+    GraphicalDisplay gf{&g};
 
     g.notifyObservers();
 

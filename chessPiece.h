@@ -52,8 +52,6 @@ class King : public ChessPiece {
 	public:
 		King(Color);
 		char displayIcon() override;
-		int getHP();
-		void setHP(int);
 		bool isValidMove(Point&, Point&, bool) override;
 };
 

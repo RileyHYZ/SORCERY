@@ -72,7 +72,7 @@ void initCards(std::vector<std::vector<Square> >& board) {
 
 // Constructor
 
-ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, defaultPromotionPiece{'Q'} {
+ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, hp{vector<int>{2, 2}}, defaultPromotionPiece{'Q'} {
     vector<vector<Square> > tmp;
     board = tmp;
 
@@ -91,6 +91,10 @@ ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, defaultPromotionPiece{'Q'} 
 }
 
 // Public Methods
+
+vector<int> ChessBoard::getHP() {
+    return hp;
+}
 
 void ChessBoard::setDefaultPromotionPiece(char d) {
     defaultPromotionPiece = d;

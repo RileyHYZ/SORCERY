@@ -13,13 +13,16 @@ class ChessBoard {
     const int NUM_COLS;
     std::vector<std::vector<Square> > board;
     std::vector<std::unique_ptr<ChessPiece> > pieces;
+    std::vector<int> hp;
     char defaultPromotionPiece;
 
   public:
     ChessBoard();
-
+    
+    std::vector<int> getHP();
     void setDefaultPromotionPiece(char);
 
+    void updateHP(Color, int);
 		void makeMove(Point&, Point&, Color);
 		bool checkStandstill();
 		void applyCardAt(Point&);
