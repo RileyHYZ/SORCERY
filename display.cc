@@ -79,14 +79,7 @@ void TextDisplay::notify() {
     } else {
         out << "No card was played in this turn." << endl;
     }
-    cout << "winner is: " << getSubject()->getWinner() << endl;
-    if (getSubject()->getWinner() == WHITE) {
-        out << "The white player wins!" << endl;
-    } else if (getSubject()->getWinner() == BLACK) {
-        out << "The black player wins!" << endl;
-    } else if (getSubject()->isTie()) {
-        out << "The game ends in a tie." << endl;
-    }
+    
     if (getSubject()->getWinner() == WHITE) {
         out << "The white player wins!" << endl;
     } else if (getSubject()->getWinner() == BLACK) {
