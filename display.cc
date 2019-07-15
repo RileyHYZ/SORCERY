@@ -71,10 +71,27 @@ void TextDisplay::notify() {
     }
     out << "   A B C D E F G H" << endl;
 
-    out << "The white player's king has " << hp.at(0) << " HP." << endl;
-    out << "The black player's king has " << hp.at(1) << " HP." << endl;
+    out << "The white player's king has " << hp.at(WHITE) << " HP." << endl;
+    out << "The black player's king has " << hp.at(BLACK) << " HP." << endl;
 
-    if (getSubject()->getLastCardApplied() != NONE) {
-        out << "The card that was played in this turn was " << getSubject()->getLastCardApplied() << endl;
+    if (getSubject()->getLastCardApplied() != Card::NONE) {
+        out << "The card that was played in this turn was " << getSubject()->getLastCardApplied().getName() << ". " << getSubject()->getLastCardApplied().getDescription() << endl;
+    } else {
+        out << "No card was played in this turn." << endl;
+    }
+    cout << "winner is: " << getSubject()->getWinner() << endl;
+    if (getSubject()->getWinner() == WHITE) {
+        out << "The white player wins!" << endl;
+    } else if (getSubject()->getWinner() == BLACK) {
+        out << "The black player wins!" << endl;
+    } else if (getSubject()->isTie()) {
+        out << "The game ends in a tie." << endl;
+    }
+    if (getSubject()->getWinner() == WHITE) {
+        out << "The white player wins!" << endl;
+    } else if (getSubject()->getWinner() == BLACK) {
+        out << "The black player wins!" << endl;
+    } else if (getSubject()->isTie()) {
+        out << "The game ends in a tie." << endl;
     }
 }

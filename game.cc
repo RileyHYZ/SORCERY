@@ -9,7 +9,7 @@ using namespace std;
 
 // Constructor
 
-Game::Game() : chessBoard{make_unique<ChessBoard>()}, curPlayer{WHITE}, lastCardApplied{NONE} {}
+Game::Game() : chessBoard{make_unique<ChessBoard>()}, curPlayer{WHITE}, lastCardApplied{Card::NONE}, winner{UNDEF}, tie{false}  {}
 
 // Accessors
 
@@ -21,6 +21,14 @@ Card Game::getLastCardApplied() {
     return lastCardApplied;
 }
 
+Color Game::getWinner() {
+    return winner;
+}
+
+bool Game::isTie() {
+    return tie;
+}
+
 // Public Methods
 
 void Game::setDefaultPromotionPiece(char piece) {
@@ -30,24 +38,54 @@ void Game::setDefaultPromotionPiece(char piece) {
 bool Game::playTurn(Point& curPos, Point& newPos) {
     chessBoard->makeMove(curPos, newPos, curPlayer);
     lastCardApplied = chessBoard->getCardAt(newPos);
-    switch (lastCardApplied) {
-        case CURSE:
+    switch (lastCardApplied.getValue()) {
+        case Card::CURSE:
             chessBoard->updateHP(curPlayer == WHITE ? BLACK : WHITE, -1);
             break;
-        case PLUSONEHP:
+        case Card::PLUSONEHP:
             chessBoard->updateHP(curPlayer, 1);
             break;
-        case FIRECOLUMN:
-        case MOAT:
-        case DESTRUCTION:
-        case RESURRECTION:
+        case Card::FIRECOLUMN:
+        case Card::MOAT:
+        case Card::DESTRUCTION:
+        case Card::RESURRECTION:
             chessBoard->applyCardAt(curPlayer, newPos);
             break;
         default:
             break;
     }
-    chessBoard->setCardAt(newPos, NONE);
+    chessBoard->setCardAt(newPos, Card::NONE);
+
+    // Check for winner
+    bool gameEnded = checkWin();
+
+    // Switch turn if ENCHANTMENT card not applied
+    if (!(lastCardApplied == Card::ENCHANTMENT)) curPlayer = curPlayer == WHITE ? BLACK : WHITE;
+
+    // Notify observers to display screen
     notifyObservers();
-    if (!(lastCardApplied == ENCHANTMENT)) curPlayer = curPlayer == WHITE ? BLACK : WHITE;
+
+    return gameEnded;
+}
+
+bool Game::checkWin() {
+    Color opponent = curPlayer == WHITE ? BLACK : WHITE;
+
+    if(chessBoard->getPlayerHp(opponent) <= 0 || !chessBoard->armyIsAlive(opponent)){
+        winner = curPlayer;
+        return true;
+    }
+
+    if(chessBoard->checkStandstill()) {
+        if (chessBoard->getPlayerHp(opponent) > chessBoard->getPlayerHp(curPlayer)) {
+            winner = opponent;
+        } else if (chessBoard->getPlayerHp(opponent) == chessBoard->getPlayerHp(curPlayer)) {
+            tie = true;
+        } else {
+            winner = curPlayer;
+        }
+        return true;
+    }
+    
     return false;
 }

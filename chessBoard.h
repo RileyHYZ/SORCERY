@@ -33,6 +33,8 @@ class ChessBoard {
 		void makeMove(Point&, Point&, Color);
 		bool checkStandstill();
 		void applyCardAt(Color, Point&);
+    int getPlayerHp(Color);
+    bool armyIsAlive(Color);
 
     class Iterator {
         std::vector<std::vector<Square> > board;

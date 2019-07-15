@@ -45,26 +45,26 @@ void ChessBoard::initCards() {
     for (int i = 2; i < 6; i++) {
         for (int j = 0; j < 8; j++) {
             if (rand[ind] < 4) {
-                board[i][j].setCard(PLUSONEHP);
+                board.at(i).at(j).setCard(Card::PLUSONEHP);
             } else if(rand[ind] >= 4 && rand[ind] < 7) {
-                board[i][j].setCard(DESTRUCTION);
+                board.at(i).at(j).setCard(Card::DESTRUCTION);
             } else if(rand[ind] >= 7 && rand[ind] < 13) {
-                board[i][j].setCard(ENCHANTMENT);
+                board.at(i).at(j).setCard(Card::ENCHANTMENT);
             } else if(rand[ind] >= 13 && rand[ind] < 22) {
-                board[i][j].setCard(BLANK);
+                board.at(i).at(j).setCard(Card::BLANK);
             } else if(rand[ind] >= 22 && rand[ind] < 27) {
-                board[i][j].setCard(FIRECOLUMN);
+                board.at(i).at(j).setCard(Card::FIRECOLUMN);
             } else if(rand[ind] >= 27 && rand[ind] < 29) {
-                board[i][j].setCard(MOAT);
+                board.at(i).at(j).setCard(Card::MOAT);
             } else if(rand[ind] >= 29 && rand[ind] < 31) {
-                board[i][j].setCard(CURSE);
+                board.at(i).at(j).setCard(Card::CURSE);
             } else {
-                board[i][j].setCard(RESURRECTION);
+                board.at(i).at(j).setCard(Card::RESURRECTION);
             }
             ind++;
         }
     }
-    board[2][4].setCard(FIRECOLUMN);
+    board[2][4].setCard(Card::FIRECOLUMN);
 }
 
 void ChessBoard::removePieceAt(Square& s) {
@@ -89,7 +89,7 @@ ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, hp{vector<int>{2, 2}}, defa
         vector<Square> v;
         
         for (int j = 0; j < NUM_COLS; ++j) {
-            Square s{nullptr, NONE, (i + j) % 2 == 0 ? BLACK : WHITE};
+            Square s{nullptr, Card::NONE, (i + j) % 2 == 0 ? BLACK : WHITE};
             v.emplace_back(s);
         }
 
@@ -161,10 +161,10 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
 
     // Do the move
 
-    // If King is captured, decrease HP; else move the piece
+    // If King is captured, decrease HP; else move the piece and perform pawn promotion if necessary
     // If piece captures the King, it's removed from the game
     if (dynamic_cast<King*>(capturedPiece)) {
-        hp.at(player) -= 1;
+        hp.at(player == WHITE ? BLACK : WHITE) -= 1;
         removePieceAt(board.at(curPos.getX()).at(curPos.getY()));
     } else {
         // Remove captured piece
@@ -173,39 +173,74 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
         // Move the piece
         board.at(curPos.getX()).at(curPos.getY()).setPiece(nullptr);
         board.at(newPos.getX()).at(newPos.getY()).setPiece(piece);
-    }
 
-    // Pawn promotion
-    if (dynamic_cast<Pawn*>(piece) && (player == BLACK && newPos.getX() == 0 || player == WHITE && newPos.getX() == NUM_ROWS - 1)) {
-        unique_ptr<ChessPiece> cp;
-        switch (defaultPromotionPieces.at(player)) {
-            case 'q':
-                cp = make_unique<Queen>(player);
-                break;
-            case 'n':
-                cp = make_unique<Knight>(player);
-                break;
-            case 'b':
-                cp = make_unique<Bishop>(player);
-                break;
-            case 'r':
-                cp = make_unique<Rook>(player);
-                break;
+        // Pawn promotion
+        if (dynamic_cast<Pawn*>(piece) && (player == BLACK && newPos.getX() == 0 || player == WHITE && newPos.getX() == NUM_ROWS - 1)) {
+            unique_ptr<ChessPiece> cp;
+            switch (defaultPromotionPieces.at(player)) {
+                case 'q':
+                    cp = make_unique<Queen>(player);
+                    break;
+                case 'n':
+                    cp = make_unique<Knight>(player);
+                    break;
+                case 'b':
+                    cp = make_unique<Bishop>(player);
+                    break;
+                case 'r':
+                    cp = make_unique<Rook>(player);
+                    break;
+            }
+            board.at(newPos.getX()).at(newPos.getY()).setPiece(cp.get());
+            pieces.push_back(move(cp));
         }
-        board.at(newPos.getX()).at(newPos.getY()).setPiece(cp.get());
-        pieces.push_back(move(cp));
+    }   
+}
+
+bool diagMoveIsLegal(std::vector<std::vector<Square> >& board, int i, int j, int col) {
+    bool legal = false;
+    Color color = board[i][j].getPiece()->getColor();
+    if (j > 0 && board[i][j - 1].getPiece() != nullptr) {
+        legal = board[i][j - 1].getPiece()->getColor() == color;
     }
+    if (j < col - 1 && board[i][j + 1].getPiece() != nullptr) {
+        return legal || board[i][j + 1].getPiece()->getColor() == color;
+    }
+    return legal;
 }
 
 bool ChessBoard::checkStandstill() {
-    
+    int w = 0, b = 0;
+    if (pieces.size() == 4) {
+        for (int i = 0; i < 4; i++) {
+            if(pieces[i]->getType() == "pawn") {
+                if (pieces[i]->getColor() == WHITE) w ++;
+                else b ++;
+            }
+        }
+        if (w == b == 1) {
+            for (int i = 0; i < NUM_ROWS - 1; i ++) {
+                for (int j = 0; j < NUM_COLS; j ++) {
+                    ChessPiece *cp1 = board[i][j].getPiece();
+                    ChessPiece *cp2 = board[i + 1][j].getPiece();
+                    if (cp1 != nullptr && cp2 != nullptr) {
+                        if (cp1->getType() == "pawn" && cp2->getType() == "pawn") {
+                            return !diagMoveIsLegal(board, i, j, NUM_COLS)
+                                            && !diagMoveIsLegal(board, i + 1, j, NUM_COLS);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
 }
 
 void ChessBoard::applyCardAt(Color player, Point& pos) {
     Card c = board.at(pos.getX()).at(pos.getY()).getCard();
 
-    switch (c) {
-        case FIRECOLUMN:
+    switch (c.getValue()) {
+        case Card::FIRECOLUMN:
             {
                 int increment = player == WHITE ? 1 : -1;
                 int end = player == WHITE ? NUM_ROWS : -1;
@@ -218,12 +253,12 @@ void ChessBoard::applyCardAt(Color player, Point& pos) {
                 }
             }
             break;
-        case MOAT:
+        case Card::MOAT:
             for (int i = 0; i < NUM_COLS; ++i) {
                 removePieceAt(board.at(pos.getX()).at(i));
             }
             break;
-        case DESTRUCTION:
+        case Card::DESTRUCTION:
             for (int i = pos.getX() - 1; i <= pos.getX() + 1; ++i) {
                 if (i < 0 || i >= NUM_ROWS) continue;
 
@@ -234,7 +269,7 @@ void ChessBoard::applyCardAt(Color player, Point& pos) {
                 }
             }
             break;
-        case RESURRECTION:
+        case Card::RESURRECTION:
             for (vector<Square> &v : board) {
                 for (Square &s : v) {
                     if (s.getPiece() != nullptr && s.getPiece()->getColor() == player) {
@@ -249,6 +284,21 @@ void ChessBoard::applyCardAt(Color player, Point& pos) {
         default:
             break;
     }
+}
+
+bool ChessBoard::armyIsAlive(Color color) {
+    int count = 0;
+    for(std::unique_ptr<ChessPiece>& cp: pieces) {
+        if(cp->getColor() == color) {
+            count++;
+        }
+        if(count >= 2) return true;
+    }
+    return false;
+}
+
+int ChessBoard::getPlayerHp(Color color) {
+    return hp.at(color);
 }
 
 // Iterator

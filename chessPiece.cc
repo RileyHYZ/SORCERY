@@ -12,6 +12,14 @@ ChessPiece::ChessPiece(Color c) : color{c} {}
 
 ChessPiece::~ChessPiece() {}
 
+void ChessPiece::setType(std::string type) {
+    this->type = type;
+}
+
+std::string ChessPiece::getType() {
+    return type;
+}
+
 Color ChessPiece::getColor() {
      return color;
 }
@@ -22,7 +30,7 @@ char ChessPiece::getDisplayIcon() {
     return displayIcon();
 }
 
-bool ChessPiece::checkValidMove(Point& curPos, Point& newPos, bool capture) {
+bool ChessPiece::checkValidMove(Point& curPos, Point& newPos, bool capture = false) {
     return isValidMove(curPos, newPos, capture);
 }
 
@@ -77,22 +85,27 @@ vector<Point> ChessPiece::getDiagonalPath(Point& curPos, Point& newPos) {
     return v;
 }
 
+bool isDiagonalMove(Point &curPos, Point &newPos, bool capture) {
+    return (capture && abs(curPos.getX() - newPos.getX()) == 1 &&
+                    abs(curPos.getY() - newPos.getY()) == 1) 
+                    || (!capture && abs(curPos.getX() - newPos.getX()) 
+                        == abs(curPos.getY() - newPos.getY()));
+}
+
 // Pawn
 
-Pawn::Pawn(Color c) : ChessPiece{c} {}
+Pawn::Pawn(Color c) : ChessPiece{c} {
+    setType("pawn");
+}
 
 char Pawn::displayIcon() {
     return getColor() == WHITE ? 'p' : 'P';
 }
 		
 bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
-    if(capture) {
-        return abs(curPos.getX() - newPos.getX()) == 1 &&
-                    abs(curPos.getY() - newPos.getY()) == 1;
-    }
     bool forwardOne = getColor() == WHITE ? newPos.getX() == curPos.getX() + 1 :
                     newPos.getX() == curPos.getX() - 1;
-    return curPos.getY() == newPos.getY() && forwardOne; 
+    return isDiagonalMove(curPos, newPos, capture) || (curPos.getY() == newPos.getY() && forwardOne); 
 }
 
 vector<Point> Pawn::piecePath(Point& curPos, Point& newPos) {
@@ -101,9 +114,11 @@ vector<Point> Pawn::piecePath(Point& curPos, Point& newPos) {
 
 // Knight
 
-Knight::Knight(Color c) : ChessPiece{c} {}
+Knight::Knight(Color c) : ChessPiece{c} {
+    setType("knight");
+}
 
-bool Knight::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
+bool Knight::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return abs(curPos.getX() - newPos.getX()) + abs(curPos.getY() - newPos.getY()) == 3;
 }
 
@@ -117,10 +132,12 @@ vector<Point> Knight::piecePath(Point& curPos, Point& newPos) {
 
 // Bishop
 
-Bishop::Bishop(Color c) : ChessPiece{c} {}
+Bishop::Bishop(Color c) : ChessPiece{c} {
+    setType("bishop");
+}
 
-bool Bishop::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
-    return abs(curPos.getX() - newPos.getX()) == abs(curPos.getY() - newPos.getY());
+bool Bishop::isValidMove(Point& curPos, Point& newPos, bool capture) {
+    return isDiagonalMove(curPos, newPos, capture);
 }
 
 char Bishop::displayIcon() {
@@ -133,9 +150,11 @@ vector<Point> Bishop::piecePath(Point& curPos, Point& newPos) {
 
 // Rook
 
-Rook::Rook(Color c) : ChessPiece{c} {}
+Rook::Rook(Color c) : ChessPiece{c} {
+    setType("rook");
+}
 
-bool Rook::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
+bool Rook::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return curPos.getX() == newPos.getX() || curPos.getY() == newPos.getY();
 }
 
@@ -153,13 +172,15 @@ vector<Point> Rook::piecePath(Point& curPos, Point& newPos) {
 
 // King
 
-King::King(Color c) : ChessPiece{c} {}
+King::King(Color c) : ChessPiece{c} {
+    setType("king");
+}
 
 char King::displayIcon() {
     return getColor() == WHITE ? 'k' : 'K';
 }
 
-bool King::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
+bool King::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return false;
 }
 
@@ -169,10 +190,12 @@ vector<Point> King::piecePath(Point& curPos, Point& newPos) {
 
 // Queen
 
-Queen::Queen(Color c) : ChessPiece{c} {}
+Queen::Queen(Color c) : ChessPiece{c} {
+    setType("queen");
+}
 
-bool Queen::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
-    return abs(curPos.getX() - newPos.getX()) == abs(curPos.getY() - newPos.getY())
+bool Queen::isValidMove(Point& curPos, Point& newPos, bool capture) {
+    return isDiagonalMove(curPos, newPos, capture)
                     || curPos.getX() == newPos.getX()
                     || curPos.getY() == newPos.getY();
 }

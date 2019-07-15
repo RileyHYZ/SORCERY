@@ -8,6 +8,7 @@
 
 class ChessPiece {
 		Color color;
+		std::string type;
 
 		virtual char displayIcon() = 0;
 		virtual std::vector<Point> piecePath(Point&, Point&) = 0;
@@ -19,11 +20,15 @@ class ChessPiece {
 		std::vector<Point> getDiagonalPath(Point&, Point&);
 		
 	public:
-		ChessPiece(Color); 
+		ChessPiece(Color);
 		virtual ~ChessPiece();
 
+		void setType(std::string);
+
+		std::string getType();
 		Color getColor();
 		char getDisplayIcon();
+		
 
 		std::vector<Point> getPiecePath(Point&, Point&);
 		bool checkValidMove(Point&, Point&, bool);

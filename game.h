@@ -12,12 +12,18 @@ class Game : public Subject {
     std::unique_ptr<ChessBoard> chessBoard;
 		Color curPlayer;
     Card lastCardApplied;
+    Color winner;
+    bool tie;
+
+    bool checkWin();
 
   public:
     Game();
 
     ChessBoard* getChessBoard();
     Card getLastCardApplied();
+    Color getWinner();
+    bool isTie();
 
     void setDefaultPromotionPiece(char);
 
