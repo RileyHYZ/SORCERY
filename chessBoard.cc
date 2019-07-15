@@ -38,8 +38,7 @@ void ChessBoard::initPieces(Color c) {
 void ChessBoard::initCards() {
     vector<int> rand(32);
     iota(rand.begin(), rand.end(), 1);
-    auto rng = default_random_engine {};
-    shuffle(rand.begin(), rand.end(), rng);
+    shuffle(rand.begin(), rand.end(), default_random_engine{time(nullptr)});
 
     int ind = 0;
     for (int i = 2; i < 6; i++) {
@@ -64,7 +63,6 @@ void ChessBoard::initCards() {
             ind++;
         }
     }
-    board[2][4].setCard(Card::FIRECOLUMN);
 }
 
 void ChessBoard::removePieceAt(Square& s) {
