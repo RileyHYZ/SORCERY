@@ -81,7 +81,7 @@ bool isDiagonalMove(Point &curPos, Point &newPos, bool capture) {
     return (capture && abs(curPos.getX() - newPos.getX()) == 1 &&
                     abs(curPos.getY() - curPos.getY()) == 1) 
                     || (!capture && abs(curPos.getX() - newPos.getX()) 
-                        == abs(curPos.getY() - curPos.getY()));
+                        == abs(curPos.getY() - newPos.getY()));
 }
 
 // Pawn
