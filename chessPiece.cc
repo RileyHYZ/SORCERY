@@ -34,6 +34,7 @@ bool ChessPiece::checkValidMove(Point& curPos, Point& newPos, bool capture = fal
     return isValidMove(curPos, newPos, capture);
 }
 
+<<<<<<< HEAD
 vector<Point> ChessPiece::getPiecePath(Point& curPos, Point& newPos) {
     return piecePath(curPos, newPos);
 }
@@ -90,6 +91,13 @@ bool isDiagonalMove(Point &curPos, Point &newPos, bool capture) {
                     abs(curPos.getY() - newPos.getY()) == 1) 
                     || (!capture && abs(curPos.getX() - newPos.getX()) 
                         == abs(curPos.getY() - newPos.getY()));
+=======
+bool isDiagonalMove(Point &curPos, Point &newPos, bool capture) {
+    return (capture && abs(curPos.getX() - newPos.getX()) == 1 &&
+                    abs(curPos.getY() - curPos.getY()) == 1) 
+                    || (!capture && abs(curPos.getX() - newPos.getX()) 
+                        == abs(curPos.getY() - curPos.getY()));
+>>>>>>> 1b32cd0b86a2e7612cdc7f7a075e641354d7c51a
 }
 
 // Pawn
@@ -184,8 +192,13 @@ bool King::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return false;
 }
 
+<<<<<<< HEAD
 vector<Point> King::piecePath(Point& curPos, Point& newPos) {
     return vector<Point>{};
+=======
+bool King::isValidMove(Point& curPos, Point& newPos, bool capture) {
+    return false;
+>>>>>>> 1b32cd0b86a2e7612cdc7f7a075e641354d7c51a
 }
 
 // Queen
