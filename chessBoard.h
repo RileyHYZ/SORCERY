@@ -19,6 +19,9 @@ class ChessBoard {
 
     void initPieces(Color);
     void initCards();
+    void checkMakeMove(Point&, Point&, Color);
+    bool isWithinBounds(Point&);
+    bool validPieceSelected(ChessPiece*, Color);
     void removePieceAt(Square&);
 
   public:
@@ -35,6 +38,7 @@ class ChessBoard {
 		void applyCardAt(Color, Point&);
     int getPlayerHp(Color);
     bool armyIsAlive(Color);
+    void markValidMoves(Point&, Color, bool);
 
     class Iterator {
         std::vector<std::vector<Square> > board;

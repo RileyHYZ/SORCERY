@@ -37,6 +37,14 @@ int main(void) {
             } catch (InvalidDefaultPromotionPieceException& e) {
                 cerr << e.what() << endl;
             }
+        }  else if (cmd == "validmoves") {
+            Point pos;
+            cin >> pos;
+            try {
+                g.showValidMoves(pos);
+            } catch (InvalidMoveException& e) {
+                cerr << e.what() << endl;
+            }
         } else {
             cout << "Invalid command: " << cmd << endl; 
         }

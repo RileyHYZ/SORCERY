@@ -13,11 +13,15 @@ class ChessPiece {
 		virtual char displayIcon() = 0;
 		virtual std::vector<Point> piecePath(Point&, Point&) = 0;
 		virtual bool isValidMove(Point&, Point&, bool) = 0;
+		virtual std::vector<Point> validMoves(Point&, Color, int, int) = 0;
 
 	protected:
 		std::vector<Point> getHorizontalPath(Point&, Point&);
 		std::vector<Point> getVerticalPath(Point&, Point&);
 		std::vector<Point> getDiagonalPath(Point&, Point&);
+		std::vector<Point> getHorizontalMoves(Point&, int ,int);
+		std::vector<Point> getVerticalMoves(Point&, int, int);
+		std::vector<Point> getDiagonalMoves(Point&, int, int);
 		
 	public:
 		ChessPiece(Color);
@@ -29,9 +33,9 @@ class ChessPiece {
 		Color getColor();
 		char getDisplayIcon();
 		
-
 		std::vector<Point> getPiecePath(Point&, Point&);
 		bool checkValidMove(Point&, Point&, bool);
+		std::vector<Point> getValidMoves(Point&, Color, int, int);
 };
 
 class Pawn : public ChessPiece {
@@ -40,6 +44,7 @@ class Pawn : public ChessPiece {
 		char displayIcon() override;
 		std::vector<Point> piecePath(Point&, Point&);
 		bool isValidMove(Point&, Point&, bool) override;
+		std::vector<Point> validMoves(Point&, Color, int, int);
 };
 
 class Knight : public ChessPiece {
@@ -48,6 +53,7 @@ class Knight : public ChessPiece {
 		char displayIcon() override;
 		std::vector<Point> piecePath(Point&, Point&);
 		bool isValidMove(Point&, Point&, bool) override;
+		std::vector<Point> validMoves(Point&, Color, int, int);
 };
 
 class Bishop : public ChessPiece {
@@ -56,6 +62,7 @@ class Bishop : public ChessPiece {
 		char displayIcon() override;
 		std::vector<Point> piecePath(Point&, Point&);
 		bool isValidMove(Point&, Point&, bool) override;
+		std::vector<Point> validMoves(Point&, Color, int, int);
 };
 
 class Rook : public ChessPiece {
@@ -64,6 +71,7 @@ class Rook : public ChessPiece {
 		char displayIcon() override;
 		std::vector<Point> piecePath(Point&, Point&);
 		bool isValidMove(Point&, Point&, bool) override;
+		std::vector<Point> validMoves(Point&, Color, int, int);
 };
 
 class King : public ChessPiece {
@@ -72,6 +80,7 @@ class King : public ChessPiece {
 		char displayIcon() override;
 		std::vector<Point> piecePath(Point&, Point&);
 		bool isValidMove(Point&, Point&, bool) override;
+		std::vector<Point> validMoves(Point&, Color, int, int);
 };
 
 class Queen : public ChessPiece {
@@ -80,6 +89,7 @@ class Queen : public ChessPiece {
 		char displayIcon() override;
 		std::vector<Point> piecePath(Point&, Point&);
 		bool isValidMove(Point&, Point&, bool) override;
+		std::vector<Point> validMoves(Point&, Color, int, int);
 };
 
 #endif

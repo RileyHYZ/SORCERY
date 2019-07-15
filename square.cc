@@ -23,6 +23,10 @@ Color Square::getColor() {
     return color;
 }
 
+bool Square::isValid() {
+    return valid;
+}
+
 // Mutators
 
 void Square::setPiece(ChessPiece* p) {
@@ -31,6 +35,10 @@ void Square::setPiece(ChessPiece* p) {
 
 void Square::setCard(Card c) {
     card = c;
+}
+
+void Square::setValid(bool v) {
+    valid = v;
 }
 
 // Constructor

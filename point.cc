@@ -43,5 +43,5 @@ istream& operator>>(istream& in, Point& p) {
 }
 
 ostream& operator<<(ostream& out, Point& p) {
-    return out << char(p.y + 'a') << p.x + 1 << endl;
+    return out << char(p.y + 'a') << p.x + 1;
 }

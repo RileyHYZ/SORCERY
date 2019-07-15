@@ -29,6 +29,10 @@ bool Game::isTie() {
     return tie;
 }
 
+bool Game::showingValidMoves() {
+    return validMoves;
+}
+
 // Public Methods
 
 void Game::setDefaultPromotionPiece(char piece) {
@@ -67,6 +71,14 @@ bool Game::playTurn(Point& curPos, Point& newPos) {
 
     return gameEnded;
 }
+
+void Game::showValidMoves(Point& pos) {
+    chessBoard->markValidMoves(pos, curPlayer, true);
+    validMoves = true;
+    notifyObservers();
+    chessBoard->markValidMoves(pos, curPlayer, false);
+    validMoves = false;
+} 
 
 bool Game::checkWin() {
     Color opponent = curPlayer == WHITE ? BLACK : WHITE;

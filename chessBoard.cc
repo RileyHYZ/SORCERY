@@ -65,6 +65,43 @@ void ChessBoard::initCards() {
     }
 }
 
+void ChessBoard::checkMakeMove(Point& curPos, Point& newPos, Color player) {
+    // Check if same position
+    if (curPos == newPos) throw DidNotMoveException();
+
+    // Check for out of bounds
+    if (!isWithinBounds(curPos) || !isWithinBounds(newPos)) throw OutOfBoundsException();
+
+    ChessPiece* piece = board.at(curPos.getX()).at(curPos.getY()).getPiece();
+    ChessPiece* capturedPiece = board.at(newPos.getX()).at(newPos.getY()).getPiece();
+
+    // Check that valid piece was selected
+    validPieceSelected(piece, player);
+
+    // Check for invalid move for that piece type
+    if (!piece->checkValidMove(curPos, newPos, capturedPiece != nullptr)) throw InvalidPieceMovementException();
+
+    // Check for blocked path
+    vector<Point> v = piece->getPiecePath(curPos, newPos);
+    
+    for (Point p : v) {
+        ChessPiece* pi = board.at(p.getX()).at(p.getY()).getPiece();
+        if (pi != nullptr && (p != newPos || pi->getColor() == player)) throw BlockedPathException();
+    }
+}
+
+bool ChessBoard::isWithinBounds(Point& pos) {
+    return pos.getX() >= 0 && pos.getX() < NUM_ROWS && pos.getY() >= 0 && pos.getY() < NUM_COLS;
+}
+
+bool ChessBoard::validPieceSelected(ChessPiece* p, Color player) {
+    // Check that there is a piece selected
+    if (p == nullptr) throw NoPieceSelectedException();
+
+    // Check that the right player's piece is selected
+    if (p->getColor() != player) throw WrongPieceSelectedException();
+}
+
 void ChessBoard::removePieceAt(Square& s) {
     if (s.getPiece() == nullptr) return;
 
@@ -130,38 +167,13 @@ void ChessBoard::setDefaultPromotionPiece(Color player, char piece) {
 // Public Methods
 
 void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
-    // Check if same position
-    if (curPos == newPos) throw DidNotMoveException();
-
-    // Check for out of bounds
-    if (curPos.getX() < 0 || curPos.getX() >= NUM_ROWS || curPos.getY() < 0 || curPos.getY() >= NUM_COLS
-        || newPos.getX() < 0 || newPos.getX() >= NUM_ROWS || newPos.getY() < 0 || newPos.getY() >= NUM_COLS) throw OutOfBoundsException();
-
-    ChessPiece* piece = board.at(curPos.getX()).at(curPos.getY()).getPiece();
-    ChessPiece* capturedPiece = board.at(newPos.getX()).at(newPos.getY()).getPiece();
-
-    // Check that there is a piece selected
-    if (piece == nullptr) throw NoPieceSelectedException();
-
-    // Check that the right player's piece is selected
-    if (piece->getColor() != player) throw WrongPieceSelectedException();
-
-    // Check for invalid move for that piece type
-    if (!piece->checkValidMove(curPos, newPos, capturedPiece != nullptr)) throw InvalidPieceMovementException();
-
-    // Check for blocked path
-    vector<Point> v = piece->getPiecePath(curPos, newPos);
-    
-    for (Point p : v) {
-        ChessPiece* pi = board.at(p.getX()).at(p.getY()).getPiece();
-        if (pi != nullptr && (p != newPos || pi->getColor() == player)) throw BlockedPathException();
-    }
+    checkMakeMove(curPos, newPos, player);
 
     // Do the move
 
     // If King is captured, decrease HP; else move the piece and perform pawn promotion if necessary
     // If piece captures the King, it's removed from the game
-    if (dynamic_cast<King*>(capturedPiece)) {
+    if (dynamic_cast<King*>(board.at(newPos.getX()).at(newPos.getY()).getPiece())) {
         hp.at(player == WHITE ? BLACK : WHITE) -= 1;
         removePieceAt(board.at(curPos.getX()).at(curPos.getY()));
     } else {
@@ -169,11 +181,11 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
         removePieceAt(board.at(newPos.getX()).at(newPos.getY()));
 
         // Move the piece
+        board.at(newPos.getX()).at(newPos.getY()).setPiece(board.at(curPos.getX()).at(curPos.getY()).getPiece());
         board.at(curPos.getX()).at(curPos.getY()).setPiece(nullptr);
-        board.at(newPos.getX()).at(newPos.getY()).setPiece(piece);
 
         // Pawn promotion
-        if (dynamic_cast<Pawn*>(piece) && (player == BLACK && newPos.getX() == 0 || player == WHITE && newPos.getX() == NUM_ROWS - 1)) {
+        if (dynamic_cast<Pawn*>(board.at(curPos.getX()).at(curPos.getY()).getPiece()) && (player == BLACK && newPos.getX() == 0 || player == WHITE && newPos.getX() == NUM_ROWS - 1)) {
             unique_ptr<ChessPiece> cp;
             switch (defaultPromotionPieces.at(player)) {
                 case 'q':
@@ -297,6 +309,25 @@ bool ChessBoard::armyIsAlive(Color color) {
 
 int ChessBoard::getPlayerHp(Color color) {
     return hp.at(color);
+}
+
+void ChessBoard::markValidMoves(Point& pos, Color player, bool valid) {
+    if (!isWithinBounds(pos)) throw OutOfBoundsException{};
+
+    ChessPiece* piece = board.at(pos.getX()).at(pos.getY()).getPiece();
+    validPieceSelected(piece, player);
+
+    // Get valid moves for the piece
+    vector<Point> validMoves = piece->getValidMoves(pos, player, NUM_ROWS - 1, NUM_COLS - 1);
+    // Mark square as valid if within bounds and is not occupied by 
+    for (Point p : validMoves) {
+        try {
+            checkMakeMove(pos, p, player);
+            board.at(p.getX()).at(p.getY()).setValid(valid);
+        } catch (InvalidMoveException &e) {
+            continue;
+        }
+    }
 }
 
 // Iterator

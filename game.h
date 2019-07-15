@@ -14,6 +14,7 @@ class Game : public Subject {
     Card lastCardApplied;
     Color winner;
     bool tie;
+    bool validMoves; // showing valid moves
 
     bool checkWin();
 
@@ -24,10 +25,12 @@ class Game : public Subject {
     Card getLastCardApplied();
     Color getWinner();
     bool isTie();
+    bool showingValidMoves();
 
     void setDefaultPromotionPiece(char);
 
 		bool playTurn(Point&, Point&);
+    void showValidMoves(Point&);
 };
 
 #endif
