@@ -22,7 +22,7 @@ char ChessPiece::getDisplayIcon() {
     return displayIcon();
 }
 
-bool ChessPiece::checkValidMove(Point& curPos, Point& newPos, bool capture) {
+bool ChessPiece::checkValidMove(Point& curPos, Point& newPos, bool capture = false) {
     return isValidMove(curPos, newPos, capture);
 }
 
@@ -77,6 +77,13 @@ vector<Point> ChessPiece::getDiagonalPath(Point& curPos, Point& newPos) {
     return v;
 }
 
+bool isDiagonalMove(Point &curPos, Point &newPos, bool capture) {
+    return (capture && abs(curPos.getX() - newPos.getX()) == 1 &&
+                    abs(curPos.getY() - curPos.getY()) == 1) 
+                    || (!capture && abs(curPos.getX() - newPos.getX()) 
+                        == abs(curPos.getY() - curPos.getY()));
+}
+
 // Pawn
 
 Pawn::Pawn(Color c) : ChessPiece{c} {}
@@ -103,7 +110,7 @@ vector<Point> Pawn::piecePath(Point& curPos, Point& newPos) {
 
 Knight::Knight(Color c) : ChessPiece{c} {}
 
-bool Knight::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
+bool Knight::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return abs(curPos.getX() - newPos.getX()) + abs(curPos.getY() - newPos.getY()) == 3;
 }
 
@@ -119,8 +126,8 @@ vector<Point> Knight::piecePath(Point& curPos, Point& newPos) {
 
 Bishop::Bishop(Color c) : ChessPiece{c} {}
 
-bool Bishop::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
-    return abs(curPos.getX() - newPos.getX()) == abs(curPos.getY() - newPos.getY());
+bool Bishop::isValidMove(Point& curPos, Point& newPos, bool capture) {
+    return isDiagonalMove(curPos, newPos, capture);
 }
 
 char Bishop::displayIcon() {
@@ -135,7 +142,7 @@ vector<Point> Bishop::piecePath(Point& curPos, Point& newPos) {
 
 Rook::Rook(Color c) : ChessPiece{c} {}
 
-bool Rook::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
+bool Rook::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return curPos.getX() == newPos.getX() || curPos.getY() == newPos.getY();
 }
 
@@ -167,7 +174,7 @@ void King::setHP(int newHP) {
     hp = newHP;
 }
 
-bool King::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
+bool King::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return false;
 }
 
@@ -179,8 +186,8 @@ vector<Point> King::piecePath(Point& curPos, Point& newPos) {
 
 Queen::Queen(Color c) : ChessPiece{c} {}
 
-bool Queen::isValidMove(Point& curPos, Point& newPos, bool cap = false) {
-    return abs(curPos.getX() - newPos.getX()) == abs(curPos.getY() - newPos.getY())
+bool Queen::isValidMove(Point& curPos, Point& newPos, bool capture) {
+    return isDiagonalMove(curPos, newPos, capture)
                     || curPos.getX() == newPos.getX()
                     || curPos.getY() == newPos.getY();
 }
