@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "display.h"
 #include "game.h"
@@ -43,20 +44,12 @@ void TextDisplay::notify() {
     int col = 0;
     int row = 8;
 
-    int whiteKingHP = 0;
-    int blackKingHP = 0;
+    vector<int> hp = board->getHP();
 
     for (Square& square : *board) {
         if (col == 0) {
             out << row << " ";
             --row;
-        }
-        if (King* k = dynamic_cast<King*>(square.getPiece())) {
-            if (k->getColor() == WHITE) {
-                whiteKingHP = k->getHP();
-            } else {
-                blackKingHP = k->getHP();
-            }   
         }
 
         out << '|';
@@ -78,10 +71,20 @@ void TextDisplay::notify() {
     }
     out << "   A B C D E F G H" << endl;
 
-    out << "The white player's king has " << whiteKingHP << " HP." << endl;
-    out << "The black player's king has " << blackKingHP << " HP." << endl;
+    out << "The white player's king has " << hp.at(WHITE) << " HP." << endl;
+    out << "The black player's king has " << hp.at(BLACK) << " HP." << endl;
 
-    if (getSubject()->getLastCardApplied() != NONE) {
-        out << "The card that was played in this term was " << getSubject()->getLastCardApplied();
+    if (getSubject()->getLastCardApplied() != Card::NONE) {
+        out << "The card that was played in this turn was " << getSubject()->getLastCardApplied().getName() << ". " << getSubject()->getLastCardApplied().getDescription() << endl;
+    } else {
+        out << "No card was played in this turn." << endl;
+    }
+    
+    if (getSubject()->getWinner() == WHITE) {
+        out << "The white player wins!" << endl;
+    } else if (getSubject()->getWinner() == BLACK) {
+        out << "The black player wins!" << endl;
+    } else if (getSubject()->isTie()) {
+        out << "The game ends in a tie." << endl;
     }
 }
