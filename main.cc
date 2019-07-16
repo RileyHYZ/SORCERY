@@ -10,6 +10,7 @@ using namespace std;
 int main(void) {
     Game g;
     TextDisplay t{&g, cout};
+    bool enhancementsOn = false;
 
     g.notifyObservers();
 
@@ -37,7 +38,7 @@ int main(void) {
             } catch (InvalidDefaultPromotionPieceException& e) {
                 cerr << e.what() << endl;
             }
-        }  else if (cmd == "validmoves") {
+        }  else if (enhancementsOn && cmd == "validmoves") {
             Point pos;
             cin >> pos;
             try {
@@ -45,6 +46,10 @@ int main(void) {
             } catch (InvalidMoveException& e) {
                 cerr << e.what() << endl;
             }
+        } else if (cmd == "enhancements") {
+            string s;
+            cin >> s;
+            enhancementsOn = s == "on" ? true : false;
         } else {
             cout << "Invalid command: " << cmd << endl; 
         }
