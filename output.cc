@@ -95,14 +95,6 @@ void TextDisplay::notify() {
 
 GraphicalDisplay::GraphicalDisplay(Game* subject) : Output{subject} {
     window = new Xwindow{};
-    window->drawRectangle(90, 90, 320, 320, 1);
-    for (int i = 0; i < 8; i ++) {
-        for (int j = 0; j < 8; j++) {
-            if ((i + j) % 2 == 0) {
-                window->fillRectangle(90 + 40 * j, 90 + 40 * i, 40, 40, 1);
-            }
-        }
-    }
     getSubject()->attach(this);
 }
 
@@ -117,22 +109,30 @@ GraphicalDisplay::~GraphicalDisplay() {
 
 void GraphicalDisplay::notify() {
     ChessBoard* board = getSubject()->getChessBoard();
-
+    window->clearWindow();
+    window->drawRectangle(390, 90, 320, 320, 1);
+    for (int i = 0; i < 8; i ++) {
+        for (int j = 0; j < 8; j++) {
+            if ((i + j) % 2 == 0) {
+                window->fillRectangle(390 + 40 * j, 90 + 40 * i, 40, 40, 1);
+            }
+        }
+    }
     vector<int> hp = board->getHP();
     for(int i = 0; i < hp.at(WHITE); i++) {
-        window->fillRectangle(40 + 30 * i, 30, 20, 20, 2);
+        window->fillRectangle(340 + 30 * i, 30, 20, 20, 2);
     }
     for(int i = 0; i < hp.at(BLACK); i++) {
-        window->fillRectangle(410 + 30 * i, 460, 20, 20, 2);
+        window->fillRectangle(710 + 30 * i, 460, 20, 20, 2);
     }
     int row = 0, col = 0;
     for (Square& square : *board) {
         if (square.getPiece() != nullptr) {
             string path;
             string name = square.getPiece()->getType();
-            if ((row + col) % 2) path = "./" + name + ".png";
-            else path = "./" + name + "2.png";
-            window->putImage(95 + 40 * col, 95 + 40 * row, path.c_str());
+            if ((row + col) % 2) path = "./pieces/" + name + ".png";
+            else path = "./pieces/" + name + "2.png";
+            window->putImage(395 + 40 * col, 95 + 40 * row, path.c_str());
             //window->drawString(100 + 40 * col, 100 + 40 * row, "周");
         }
         col ++;
@@ -140,5 +140,10 @@ void GraphicalDisplay::notify() {
             col = 0;
             row ++;
         }
+    }
+    if (getSubject()->getLastCardApplied() != Card::NONE) {
+        cout<<"play card"<<endl;
+        string path = "./cards/" + getSubject()->getLastCardApplied().getName()+".png";
+        window->putImage(50, 90, path.c_str());
     }
 }

@@ -12,10 +12,6 @@ ChessPiece::ChessPiece(Color c) : color{c} {}
 
 ChessPiece::~ChessPiece() {}
 
-string ChessPiece::getType() {
-    return type;
-}
-
 Color ChessPiece::getColor() {
      return color;
 }

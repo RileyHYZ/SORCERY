@@ -10,6 +10,7 @@ using namespace std;
 int main(void) {
     Game g;
     TextDisplay t{&g, cout};
+    GraphicalDisplay gd{&g};
 
     g.notifyObservers();
 

@@ -38,7 +38,8 @@ void ChessBoard::initPieces(Color c) {
 void ChessBoard::initCards() {
     vector<int> rand(32);
     iota(rand.begin(), rand.end(), 1);
-    shuffle(rand.begin(), rand.end(), default_random_engine{time(nullptr)});
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    shuffle(rand.begin(), rand.end(), default_random_engine{seed});
 
     int ind = 0;
     for (int i = 2; i < 6; i++) {

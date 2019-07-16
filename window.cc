@@ -117,7 +117,7 @@ void Xwindow::drawString(int x, int y, string msg) {
 void Xwindow::putImage(int x, int y, const char* filename) {
 	FILE *file = fopen(filename, "r");
 	if(!file){
-		cout << "Cannot open file" << endl;
+		cout << filename << " Cannot open file" << endl;
 	}
 	char *data = NULL;
 
@@ -127,7 +127,7 @@ void Xwindow::putImage(int x, int y, const char* filename) {
     int readFlag = PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND;
     int colorType = 0;
     int interlaceMethod = 0;
-    int rowBytes = 0, clipRowBytes = 0;
+    int rowBytes = 0;
 
     png_uint_32 index = 0;
     png_bytepp rowPointers = NULL;
@@ -142,7 +142,6 @@ void Xwindow::putImage(int x, int y, const char* filename) {
         return;
     }
     if (setjmp(png_jmpbuf(pngPtr))) {
-		cout << "SET JMP" << endl;
         png_destroy_read_struct(&pngPtr, &pngInfo, NULL);
         return;
     }
@@ -167,7 +166,7 @@ void Xwindow::putImage(int x, int y, const char* filename) {
         ++index;
     }
 
-	printf("PNG %d * %d\n rowbytes %d\n depth %d\ncolor type %d\n", width, height, rowBytes, bitDepth, colorType);
+	//printf("PNG %d * %d\n rowbytes %d\n depth %d\ncolor type %d\n", width, height, rowBytes, bitDepth, colorType);
     
 	XImage *image = XCreateImage(d, CopyFromParent, DefaultDepth(d,s), ZPixmap,
         			0, data, width, height, 8, rowBytes);
@@ -248,5 +247,9 @@ void Xwindow::putImage(int x, int y, const char* filename) {
 	// XPutImage(d, w, DefaultGC(d, s), ximage, 0, 0, 0, 0, width, height);
 	// cout << "ABORT8" << endl;
 	// XFlush(d);
+}
+
+void Xwindow::clearWindow() {
+	XClearWindow(d, w);
 }
 
