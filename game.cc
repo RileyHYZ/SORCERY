@@ -9,7 +9,7 @@ using namespace std;
 
 // Constructor
 
-Game::Game() : chessBoard{make_unique<ChessBoard>()}, curPlayer{WHITE}, lastCardApplied{Card::NONE}, winner{UNDEF}, tie{false}  {}
+Game::Game() : chessBoard{make_unique<ChessBoard>()}, curPlayer{WHITE}, lastCardApplied{Card::NONE}, winner{UNDEF}, tie{false}, validMoves{false}  {}
 
 // Accessors
 
