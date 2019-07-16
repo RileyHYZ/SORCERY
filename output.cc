@@ -3,6 +3,7 @@
 #include "output.h"
 #include "game.h"
 #include "square.h"
+#include "card.h"
 
 using namespace std;
 
@@ -73,8 +74,18 @@ void TextDisplay::notify() {
     out << "The white player's king has " << hp.at(WHITE) << " HP." << endl;
     out << "The black player's king has " << hp.at(BLACK) << " HP." << endl;
 
-    if (getSubject()->getLastCardApplied() != NONE) {
-        out << "The card that was played in this term was " << getSubject()->getLastCardApplied();
+    if (getSubject()->getLastCardApplied() != Card::NONE) {
+        out << "The card that was played in this turn was " << getSubject()->getLastCardApplied().getName() << ". " << getSubject()->getLastCardApplied().getDescription() << endl;
+    } else {
+        out << "No card was played in this turn." << endl;
+    }
+    
+    if (getSubject()->getWinner() == WHITE) {
+        out << "The white player wins!" << endl;
+    } else if (getSubject()->getWinner() == BLACK) {
+        out << "The black player wins!" << endl;
+    } else if (getSubject()->isTie()) {
+        out << "The game ends in a tie." << endl;
     }
 }
 

@@ -168,7 +168,6 @@ void Xwindow::putImage(int x, int y, const char* filename) {
     }
 
 	printf("PNG %d * %d\n rowbytes %d\n depth %d\ncolor type %d\n", width, height, rowBytes, bitDepth, colorType);
-	rowBytes = rowBytes & clipRowBytes;
     
 	XImage *image = XCreateImage(d, CopyFromParent, DefaultDepth(d,s), ZPixmap,
         			0, data, width, height, 8, rowBytes);
