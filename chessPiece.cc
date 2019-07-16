@@ -26,7 +26,7 @@ Color ChessPiece::getColor() {
 
 // Virtual Pass-Through Methods
 
-char ChessPiece::getDisplayIcon() {
+char ChessPiece::getViewIcon() {
     return displayIcon();
 }
 
@@ -135,11 +135,11 @@ Pawn::Pawn(Color c) : ChessPiece{c} {
 }
 
 char Pawn::displayIcon() {
-    return getColor() == WHITE ? 'p' : 'P';
+    return getColor() == Color::WHITE ? 'p' : 'P';
 }
 		
 bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
-    int incr = getColor() == WHITE ? 1 : -1;
+    int incr = getColor() == Color::WHITE ? 1 : -1;
     bool forwardOne = newPos.getX() == curPos.getX() + incr && newPos.getY() == curPos.getY();
     return (capture && isDiagonalMove(curPos, newPos, 1)) || forwardOne; 
 }
@@ -150,7 +150,7 @@ vector<Point> Pawn::piecePath(Point& curPos, Point& newPos) {
 
 vector<Point> Pawn::validMoves(Point& pos, Color player, int endRow, int endCol) {
     vector<Point> v;
-    int increment = player == WHITE ? 1 : -1; 
+    int increment = player == Color::WHITE ? 1 : -1; 
 
     v.push_back(Point{pos.getX() + increment, pos.getY()}); // Forward
     v.push_back(Point{pos.getX() + increment, pos.getY() - 1}); // Diagonal left
@@ -170,7 +170,7 @@ bool Knight::isValidMove(Point& curPos, Point& newPos, bool capture) {
 }
 
 char Knight::displayIcon() {
-    return getColor() == WHITE ? 'n' : 'N';
+    return getColor() == Color::WHITE ? 'n' : 'N';
 }
 
 vector<Point> Knight::piecePath(Point& curPos, Point& newPos) {
@@ -201,7 +201,7 @@ bool Bishop::isValidMove(Point& curPos, Point& newPos, bool capture) {
 }
 
 char Bishop::displayIcon() {
-    return getColor() == WHITE ? 'b' : 'B';
+    return getColor() == Color::WHITE ? 'b' : 'B';
 }
 
 vector<Point> Bishop::piecePath(Point& curPos, Point& newPos) {
@@ -223,7 +223,7 @@ bool Rook::isValidMove(Point& curPos, Point& newPos, bool capture) {
 }
 
 char Rook::displayIcon() {
-    return getColor() == WHITE ? 'r' : 'R';
+    return getColor() == Color::WHITE ? 'r' : 'R';
 }
 
 vector<Point> Rook::piecePath(Point& curPos, Point& newPos) {
@@ -232,6 +232,7 @@ vector<Point> Rook::piecePath(Point& curPos, Point& newPos) {
     } else if (curPos.getY() == newPos.getY()) {
         return getVerticalPath(curPos, newPos);
     }
+    return vector<Point>{};
 }
 
 vector<Point> Rook::validMoves(Point& pos, Color player, int endRow, int endCol) {
@@ -248,7 +249,7 @@ King::King(Color c) : ChessPiece{c} {
 }
 
 char King::displayIcon() {
-    return getColor() == WHITE ? 'k' : 'K';
+    return getColor() == Color::WHITE ? 'k' : 'K';
 }
 
 bool King::isValidMove(Point& curPos, Point& newPos, bool capture) {
@@ -276,7 +277,7 @@ bool Queen::isValidMove(Point& curPos, Point& newPos, bool capture) {
 }
 
 char Queen::displayIcon() {
-    return getColor() == WHITE ? 'q' : 'Q';
+    return getColor() == Color::WHITE ? 'q' : 'Q';
 }
 
 vector<Point> Queen::piecePath(Point& curPos, Point& newPos) {

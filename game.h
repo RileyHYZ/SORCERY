@@ -1,14 +1,15 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#include<memory>
-
-#include "subject.h"
+#include "model.h"
 #include "chessBoard.h"
 #include "color.h"
+#include "card.h"
 #include "point.h"
 
-class Game : public Subject {
+#include <memory>
+
+class Game : public Model {
     std::unique_ptr<ChessBoard> chessBoard;
 		Color curPlayer;
     Card lastCardApplied;
@@ -19,7 +20,7 @@ class Game : public Subject {
     bool checkWin();
 
   public:
-    Game();
+    Game(bool = false);
 
     ChessBoard* getChessBoard();
     Card getLastCardApplied();
@@ -29,6 +30,7 @@ class Game : public Subject {
 
     void setDefaultPromotionPiece(char);
 
+    void start(); // Game loop
 		bool playTurn(Point&, Point&);
     void showValidMoves(Point&);
 };

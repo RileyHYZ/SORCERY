@@ -31,7 +31,7 @@ class ChessPiece {
 
 		std::string getType();
 		Color getColor();
-		char getDisplayIcon();
+		char getViewIcon();
 		
 		std::vector<Point> getPiecePath(Point&, Point&);
 		bool checkValidMove(Point&, Point&, bool);
