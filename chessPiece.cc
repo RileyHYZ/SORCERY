@@ -8,12 +8,20 @@ ChessPiece::ChessPiece(Color c) : color{c} {}
 
 ChessPiece::~ChessPiece() {}
 
+void ChessPiece::setType(std::string type) {
+    this->type = type;
+}
+
 Color ChessPiece::getColor() {
      return color;
 }
 
 std::string ChessPiece::getDisplayIcon() {
     return displayIcon();
+}
+
+std::string ChessPiece::getType() {
+    return type;
 }
 
 bool ChessPiece::checkValidMove(Point& curPos, Point& newPos, bool capture = false) {
@@ -29,7 +37,9 @@ bool isDiagonalMove(Point &curPos, Point &newPos, bool capture) {
 
 // Pawn
 
-Pawn::Pawn(Color c) : ChessPiece{c} {}
+Pawn::Pawn(Color c) : ChessPiece{c} {
+    setType("pawn");
+}
 
 std::string Pawn::displayIcon() {
     return getColor() == WHITE ? "\u2659" : "\u265F";
@@ -43,7 +53,9 @@ bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
 
 // Knight
 
-Knight::Knight(Color c) : ChessPiece{c} {}
+Knight::Knight(Color c) : ChessPiece{c} {
+    setType("knight");
+}
 
 bool Knight::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return abs(curPos.getX() - newPos.getX()) + abs(curPos.getY() - newPos.getY()) == 3;
@@ -55,7 +67,9 @@ std::string Knight::displayIcon() {
 
 // Bishop
 
-Bishop::Bishop(Color c) : ChessPiece{c} {}
+Bishop::Bishop(Color c) : ChessPiece{c} {
+    setType("bishop");
+}
 
 bool Bishop::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return isDiagonalMove(curPos, newPos, capture);
@@ -67,7 +81,9 @@ std::string Bishop::displayIcon() {
 
 // Rook
 
-Rook::Rook(Color c) : ChessPiece{c} {}
+Rook::Rook(Color c) : ChessPiece{c} {
+    setType("rook");
+}
 
 bool Rook::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return curPos.getX() == newPos.getX() || curPos.getY() == newPos.getY();
@@ -79,7 +95,9 @@ std::string Rook::displayIcon() {
 
 // King
 
-King::King(Color c) : ChessPiece{c} {}
+King::King(Color c) : ChessPiece{c} {
+    setType("king");
+}
 
 std::string King::displayIcon() {
     return getColor() == WHITE ? "\u2654" : "\u265A";
@@ -91,7 +109,9 @@ bool King::isValidMove(Point& curPos, Point& newPos, bool capture) {
 
 // Queen
 
-Queen::Queen(Color c) : ChessPiece{c} {}
+Queen::Queen(Color c) : ChessPiece{c} {
+    setType("king");
+}
 
 bool Queen::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return isDiagonalMove(curPos, newPos, capture)

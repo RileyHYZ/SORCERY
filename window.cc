@@ -105,103 +105,86 @@ void Xwindow::drawString(int x, int y, string msg) {
                         &default_string);
         if ( num_missing_charsets > 0 ) {
                 XFreeStringList (missing_charsets);
+				for (int i=0; i < num_missing_charsets; i++ ) {
+					cout << missing_charsets[i] << endl;
+				}
         }
 	XSetForeground(d, gc, colours[1]);
 	XmbDrawString(d, w, fontset, gc, x, y, msg.c_str(), msg.length());
 	XFlush(d);
 }
 
-void TeardownPng (png_structp png, png_infop info)
-{
-        if (png) {
-                png_infop *realInfo = (info? &info: NULL);
-                png_destroy_read_struct (&png, realInfo, NULL);
-        }
-}
-void LoadPng (FILE *file, unsigned char** data, char **clipData, unsigned int *width, unsigned int *height, unsigned int *rowbytes)
-{
-        size_t size = 0,  clipSize = 0;
-        png_structp png = NULL;
-        png_infop info = NULL;
-        unsigned char **rowPointers = NULL;
-        int depth = 0,
-            colortype = 0,
-            interlace = 0,
-            compression = 0,
-            filter = 0;
-        unsigned clipRowbytes = 0;
-png = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-info = png_create_info_struct (png);
-        png_init_io (png, file);
-        png_read_info (png, info);
-        png_get_IHDR (png, info, (png_uint_32*)width, (png_uint_32*)height, &depth, &colortype, &interlace, &compression, &filter);
-        *rowbytes = png_get_rowbytes (png, info);
-        if (colortype == PNG_COLOR_TYPE_RGB) {
-                // X hates 24bit images - pad to RGBA
-                png_set_filler (png, 0xff, PNG_FILLER_AFTER);
-                *rowbytes = (*rowbytes * 4) / 3;
-        }
-        png_set_bgr (png);
-        *width = png_get_image_width (png, info);
-        *height = png_get_image_height (png, info);
-        size = *height * *rowbytes;
-        clipRowbytes = *rowbytes/32;
-        if (*rowbytes % 32)
-                ++clipRowbytes;
-        clipSize = clipRowbytes * *height;
-        // This gets freed by XDestroyImage
-        *data = (unsigned char*) malloc (sizeof (png_byte) * size);
-        rowPointers = (unsigned char**) malloc (*height * sizeof (unsigned char*));
-        png_bytep cursor = *data;
-    int i=0,x=0,y=0;
-        for (i=0; i<*height; ++i, cursor += *rowbytes)
-                rowPointers[i] = cursor;
-        png_read_image (png, rowPointers);
-        *clipData = (char*) calloc (clipSize, sizeof(unsigned char));
-        if (colortype == PNG_COLOR_TYPE_RGB) {
-                memset (*clipData, 0xff, clipSize);
-        } else {
-                // Set up bitmask for clipping fully transparent areas
-                for (y=0; y<*height; ++y, cursor+=*rowbytes) {
-                        for (x=0; x<*rowbytes; x+=4) {
-                                // Set bit in mask when alpha channel is nonzero
-                                if(rowPointers[y][x+3])
-                                        (*clipData)[(y*clipRowbytes) + (x/32)] |= (1 << ((x/4)%8));
-                        }
-                }
-        }
-        TeardownPng (png, info);
-    free (rowPointers);
-}
-
 void Xwindow::putImage(int x, int y, const char* filename) {
-	XEvent ev;
-	XNextEvent(d, &ev);
-	cout << "OPEN FILE" << endl;
 	FILE *file = fopen(filename, "r");
-	cout << "SUCCESS" << endl;
-	unsigned width_ = 0, height_ = 0;
-	unsigned char *data = NULL;
-	char *clip = NULL;
-	unsigned rowbytes = 0;
+	if(!file){
+		cout << "Cannot open file" << endl;
+	}
+	char *data = NULL;
 
-	LoadPng(file, &data, &clip, &width_, &height_, &rowbytes);
-        if (!data)
-        	 return;
-	XImage *ximage = XCreateImage (d, DefaultVisual(d, s), DefaultDepth(d,s), ZPixmap, 0, (char*)data, width_, height_, 8, rowbytes);
+    png_struct *pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_info *pngInfo = NULL;
 
-	if (ximage) {
-                XPutImage (d, w, gc, ximage, 0, 0, 0, 0, width_, height_);
-				cout << "put image" << endl;
-				XFlush(d);
-		} else {
-                free (data);
-        }
-	cout << "WHILE ENDS" << endl;
-	free (clip);
-	cout << "FREE ENDS" << endl;
+    int readFlag = PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND;
+    int colorType = 0;
+    int interlaceMethod = 0;
+    int rowBytes = 0, clipRowBytes = 0;
+
+    png_uint_32 index = 0;
+    png_bytepp rowPointers = NULL;
+    png_uint_32 width = 0;
+    png_uint_32 height = 0;
+    int bitDepth = 0;
+
+    if (!pngPtr) {
+        return;
+    } else if (!(pngInfo = png_create_info_struct(pngPtr))) {
+        png_destroy_read_struct(&pngPtr, NULL, NULL);
+        return;
+    }
+    if (setjmp(png_jmpbuf(pngPtr))) {
+		cout << "SET JMP" << endl;
+        png_destroy_read_struct(&pngPtr, &pngInfo, NULL);
+        return;
+    }
+
+    png_init_io(pngPtr, file);
+    png_set_sig_bytes(pngPtr, 0);
+
+    png_read_png(pngPtr, pngInfo, readFlag, NULL);
+    png_get_IHDR(pngPtr, pngInfo, &width, &height,
+                 &bitDepth, &colorType, &interlaceMethod,
+                 NULL, NULL);
+
+    rowBytes = png_get_rowbytes(pngPtr, pngInfo);
+    data = (char*) malloc(rowBytes * height);
+	if (!data) {
+        png_destroy_read_struct(&pngPtr, &pngInfo, NULL);
+        return;
+    }
+    rowPointers = png_get_rows(pngPtr, pngInfo);
+    while (index < height) {
+        memcpy(data + (index * rowBytes), rowPointers[index], rowBytes);
+        ++index;
+    }
+
+	printf("PNG %d * %d\n rowbytes %d\n depth %d\ncolor type %d\n", width, height, rowBytes, bitDepth, colorType);
+	rowBytes = rowBytes & clipRowBytes;
+    
+	XImage *image = XCreateImage(d, CopyFromParent, DefaultDepth(d,s), ZPixmap,
+        			0, data, width, height, 8, rowBytes);
+    png_destroy_info_struct(pngPtr, &pngInfo);
+    png_destroy_read_struct(&pngPtr, &pngInfo, NULL);
+
+	XPutImage(d, w, gc, image, 0, 0, x, y, width, height);
+	fclose(file);
 	XFlush(d);
-	cout << "REACH END" << endl;
+	free(data);
+
+	// png_structp png_ptr;
+   	// png_infop info_ptr;
+   	// unsigned int sig_read = 0;
+   	// png_uint_32 width, height;
+   	// int bit_depth, color_type, interlace_type;
 	// png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	// if(!png) abort();
 	// cout << "NOT PNG ABORT" << endl;

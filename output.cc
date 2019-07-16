@@ -84,11 +84,11 @@ void TextDisplay::notify() {
 
 GraphicalDisplay::GraphicalDisplay(Game* subject) : Output{subject} {
     window = new Xwindow{};
-    window->drawRectangle(90, 90, 320, 320, 3);
+    window->drawRectangle(90, 90, 320, 320, 1);
     for (int i = 0; i < 8; i ++) {
         for (int j = 0; j < 8; j++) {
             if ((i + j) % 2 == 0) {
-                window->fillRectangle(90 + 40 * j, 90 + 40 * i, 40, 40, 3);
+                window->fillRectangle(90 + 40 * j, 90 + 40 * i, 40, 40, 1);
             }
         }
     }
@@ -117,31 +117,17 @@ void GraphicalDisplay::notify() {
     int row = 0, col = 0;
     for (Square& square : *board) {
         if (square.getPiece() != nullptr) {
-            window->drawString(100 + 40 * col, 100 + 40 * row, "周");//square.getPiece()->getDisplayIcon());
-            // window->putImage(100 + 40 * col, 100 + 40 * row, "./test.png");
-            cout << "FINISH PRINTING" << endl;
-            break;
+            string path;
+            string name = square.getPiece()->getType();
+            if ((row + col) % 2) path = "./" + name + ".png";
+            else path = "./" + name + "2.png";
+            window->putImage(95 + 40 * col, 95 + 40 * row, path.c_str());
+            //window->drawString(100 + 40 * col, 100 + 40 * row, "周");
         }
         col ++;
         if (col == 8) {
             col = 0;
             row ++;
         }
-        
-
-        // if (square.getPiece() != nullptr) {
-        //     out << square.getPiece()->getDisplayIcon();
-        // } else if (square.getColor() == BLACK) {
-        //     out << " ";
-        // } else {
-        //     out << "\u2588";
-        // }
-
-        // if (col == 7) {
-        //     out << "|\n";
-        //     col = 0;
-        // } else {
-        //     ++col;
-        // }
     }
 }
