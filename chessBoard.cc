@@ -140,7 +140,7 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
 
     ChessPiece* piece = board.at(curPos.getX()).at(curPos.getY()).getPiece();
     ChessPiece* capturedPiece = board.at(newPos.getX()).at(newPos.getY()).getPiece();
-
+    cout<<"type"<<piece->getType()<<endl;
     // Check that there is a piece selected
     if (piece == nullptr) throw NoPieceSelectedException();
 

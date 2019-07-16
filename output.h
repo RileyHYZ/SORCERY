@@ -28,6 +28,7 @@ class TextDisplay : public Output {
 
 class GraphicalDisplay : public Output {
     Xwindow *window;
+    Point& getPoint(std::vector<int>);
     
   public: 
     GraphicalDisplay(Game*);

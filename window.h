@@ -3,6 +3,7 @@
 #include <X11/Xlib.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
 class Xwindow {
 	Display *d;
@@ -10,6 +11,7 @@ class Xwindow {
 	int s;
 	GC gc;
 	unsigned long colours[10];
+	XEvent event;
 
 public:
 	Xwindow(int width=800, int height=500);  // Constructor; displays the window.
@@ -33,6 +35,9 @@ public:
 
 	// Clear window
 	void clearWindow();
+
+	//return points
+	std::vector<int> getButtonPressed();
 };
 
 #endif
