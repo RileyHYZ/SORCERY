@@ -5,7 +5,7 @@ OBJECTS = main.o chessBoard.o chessPiece.o output.o game.o observer.o point.o sq
 DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}
-	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC} -L/opt/X11/lib -lX11
+	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC} -L/opt/X11/lib -lX11 -lpng
 
 -include ${DEPENDS}
 

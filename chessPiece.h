@@ -6,7 +6,7 @@
 class ChessPiece {
 		Color color;
 
-		virtual char displayIcon() = 0;
+		virtual std::string displayIcon() = 0;
 		virtual bool isValidMove(Point&, Point&, bool) = 0;
 		
 	public:
@@ -14,7 +14,7 @@ class ChessPiece {
 		virtual ~ChessPiece();
 
 		Color getColor();
-		char getDisplayIcon();
+		std::string getDisplayIcon();
 
 		bool checkValidMove(Point&, Point&, bool);
 };
@@ -22,43 +22,42 @@ class ChessPiece {
 class Pawn : public ChessPiece {
 	public:
 		Pawn(Color);
-		char displayIcon() override;
+		std::string displayIcon() override;
 		bool isValidMove(Point&, Point&, bool) override;
 };
 
 class Knight : public ChessPiece {
 	public:
 		Knight(Color);
-		char displayIcon() override;
+		std::string displayIcon() override;
 		bool isValidMove(Point&, Point&, bool) override;
 };
 
 class Bishop : public ChessPiece {
 	public:
 		Bishop(Color);
-		char displayIcon() override;
+		std::string displayIcon() override;
 		bool isValidMove(Point&, Point&, bool) override;
 };
 
 class Rook : public ChessPiece {
 	public:
 		Rook(Color);
-		char displayIcon() override;
+		std::string displayIcon() override;
 		bool isValidMove(Point&, Point&, bool) override;
 };
 
 class King : public ChessPiece {
-		int hp;
 	public:
 		King(Color);
-		char displayIcon() override;
+		std::string displayIcon() override;
 		bool isValidMove(Point&, Point&, bool) override;
 };
 
 class Queen : public ChessPiece {
 	public:
 		Queen(Color);
-		char displayIcon() override;
+		std::string displayIcon() override;
 		bool isValidMove(Point&, Point&, bool) override;
 };
 

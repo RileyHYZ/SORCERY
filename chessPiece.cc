@@ -12,7 +12,7 @@ Color ChessPiece::getColor() {
      return color;
 }
 
-char ChessPiece::getDisplayIcon() {
+std::string ChessPiece::getDisplayIcon() {
     return displayIcon();
 }
 
@@ -31,8 +31,8 @@ bool isDiagonalMove(Point &curPos, Point &newPos, bool capture) {
 
 Pawn::Pawn(Color c) : ChessPiece{c} {}
 
-char Pawn::displayIcon() {
-    return getColor() == WHITE ? 'p' : 'P';
+std::string Pawn::displayIcon() {
+    return getColor() == WHITE ? "\u2659" : "\u265F";
 }
 		
 bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
@@ -49,8 +49,8 @@ bool Knight::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return abs(curPos.getX() - newPos.getX()) + abs(curPos.getY() - newPos.getY()) == 3;
 }
 
-char Knight::displayIcon() {
-    return getColor() == WHITE ? 'n' : 'N';
+std::string Knight::displayIcon() {
+    return getColor() == WHITE ? "\u2658" : "\u265E";
 }
 
 // Bishop
@@ -61,8 +61,8 @@ bool Bishop::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return isDiagonalMove(curPos, newPos, capture);
 }
 
-char Bishop::displayIcon() {
-    return getColor() == WHITE ? 'b' : 'B';
+std::string Bishop::displayIcon() {
+    return getColor() == WHITE ? "\u2657" : "\u265D";
 }
 
 // Rook
@@ -73,16 +73,16 @@ bool Rook::isValidMove(Point& curPos, Point& newPos, bool capture) {
     return curPos.getX() == newPos.getX() || curPos.getY() == newPos.getY();
 }
 
-char Rook::displayIcon() {
-    return getColor() == WHITE ? 'r' : 'R';
+std::string Rook::displayIcon() {
+    return getColor() == WHITE ? "\u2656" : "\u265C";
 }
 
 // King
 
-King::King(Color c) : ChessPiece{c}, hp{2} {}
+King::King(Color c) : ChessPiece{c} {}
 
-char King::displayIcon() {
-    return getColor() == WHITE ? 'k' : 'K';
+std::string King::displayIcon() {
+    return getColor() == WHITE ? "\u2654" : "\u265A";
 }
 
 bool King::isValidMove(Point& curPos, Point& newPos, bool capture) {
@@ -99,6 +99,6 @@ bool Queen::isValidMove(Point& curPos, Point& newPos, bool capture) {
                     || curPos.getY() == newPos.getY();
 }
 
-char Queen::displayIcon() {
-    return getColor() == WHITE ? 'q' : 'Q';
+std::string Queen::displayIcon() {
+    return getColor() == WHITE ? "\u2655" : "\u265B";
 }
