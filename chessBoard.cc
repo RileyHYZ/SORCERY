@@ -79,7 +79,7 @@ void ChessBoard::removePieceAt(Square& s) {
 
 // Constructor
 
-ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, hp{vector<int>{2, 2}}, defaultPromotionPieces{vector<char>{2, 'q'}} {
+ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8}, hp{vector<int>(2, 2)}, defaultPromotionPieces{vector<char>(2, 'q')} {
     vector<vector<Square> > tmp;
     board = tmp;
 
@@ -189,6 +189,7 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
                     cp = make_unique<Rook>(player);
                     break;
             }
+            removePieceAt(board.at(newPos.getX()).at(newPos.getY())); // Remove the pawn
             board.at(newPos.getX()).at(newPos.getY()).setPiece(cp.get());
             pieces.push_back(move(cp));
         }
