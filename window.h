@@ -36,8 +36,14 @@ public:
 	// Clear window
 	void clearWindow();
 
-	//return points
-	std::vector<int> getButtonPressed();
+	// return points
+	std::vector<int> getPointSelected();
+
+	// return command
+	std::vector<int> getSelectedCommand();
+
+	// return selected promotion piece
+	char getSelectedPiece();
 };
 
 #endif

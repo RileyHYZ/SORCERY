@@ -2,6 +2,7 @@
 #define __CHESSBOARD_H__
 
 #include <vector>
+#include <unordered_map>
 #include <memory>
 
 #include "square.h"
@@ -14,17 +15,20 @@ class ChessBoard {
     const int NUM_COLS;
     std::vector<std::vector<Square> > board;
     std::vector<std::unique_ptr<ChessPiece> > pieces;
-    std::vector<int> hp;
-    std::vector<char> defaultPromotionPieces; // white at 0, black at 1
+    std::unordered_map<Color, int> hp;
+    std::unordered_map<Color, char> defaultPromotionPieces;
 
     void initPieces(Color);
     void initCards();
+    void checkMakeMove(Point&, Point&, Color);
+    bool isWithinBounds(Point&);
+    bool validPieceSelected(ChessPiece*, Color);
     void removePieceAt(Square&);
 
   public:
     ChessBoard();
 
-    std::vector<int> getHP();
+    std::unordered_map<Color, int> getHP();
     Card getCardAt(Point&);
     void setCardAt(Point&, Card);
     void setDefaultPromotionPiece(Color, char);
@@ -34,6 +38,7 @@ class ChessBoard {
 		bool checkStandstill();
 		void applyCardAt(Color, Point&);
     bool armyIsAlive(Color);
+    void markValidMoves(Point&, Color, bool);
 
     class Iterator {
         std::vector<std::vector<Square> > board;

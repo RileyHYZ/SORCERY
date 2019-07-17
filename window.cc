@@ -142,8 +142,6 @@ void Xwindow::putImage(int x, int y, const char* filename) {
         ++index;
     }
 
-	//printf("PNG %d * %d\n rowbytes %d\n depth %d\ncolor type %d\n", width, height, rowBytes, bitDepth, colorType);
-    
 	XImage *image = XCreateImage(d, CopyFromParent, DefaultDepth(d,s), ZPixmap,
         			0, data, width, height, 8, rowBytes);
     png_destroy_info_struct(pngPtr, &pngInfo);
@@ -157,16 +155,16 @@ void Xwindow::putImage(int x, int y, const char* filename) {
 
 void Xwindow::clearWindow() {
 	XClearWindow(d, w);
+	XFlush(d);
 }
 
-vector<int> Xwindow::getButtonPressed() {
-	cout<<"here"<<endl;
+vector<int> Xwindow::getPointSelected() {
 	vector<int> pts;
 	while(1) {
 		XNextEvent(d, &event);
 		switch (event.type){
 			case ButtonPress:
-				cout << "PRESSED" << endl;
+				cout << "SELECT MOVE" << endl;
 				pts.emplace_back(event.xbutton.x);
 				pts.emplace_back(event.xbutton.y);
 				cout<<"X: "<<event.xbutton.x<<" Y:"<<event.xbutton.y << endl;
@@ -180,5 +178,50 @@ vector<int> Xwindow::getButtonPressed() {
 		}
 	}
 	return pts;
+}
+
+vector<int> Xwindow::getSelectedCommand() {
+	vector<int> pts;
+	while(1) {
+		XNextEvent(d, &event);
+		switch (event.type){
+			case ButtonPress:
+				cout<<"SELECT COMMAND"<<endl;
+				pts.emplace_back(event.xbutton.x);
+				pts.emplace_back(event.xbutton.y);
+				XFlush(d);
+				if (!(pts[1] > 40 && pts[1] < 63) && !(pts[0] > 65 && pts[0] < 95) && 
+					!(pts[0] > 100 && pts[0] < 150) && !(pts[0] > 155 && pts[0] < 195) && 
+					!(pts[0] > 200 && pts[0] < 280) && !(pts[1] > 73 && pts[1] < 96) 
+					&& !(pts[0] > 55 && pts[0] < 135)){
+						pts.clear();
+						cout << "WRONG PLACE" <<endl;
+				} else return pts;
+			default:
+				break;
+		}
+	}
+	return pts;
+}
+
+char Xwindow::getSelectedPiece() {
+	vector<int> pts;
+	while(1) {
+		XNextEvent(d, &event);
+		switch (event.type){
+			case ButtonPress:
+				cout<<"PROMOTION SELECTION"<<endl;
+				pts.emplace_back(event.xbutton.x);
+				pts.emplace_back(event.xbutton.y);
+				XFlush(d);
+				if (!(pts[0] > 140 && pts[0] < 300) && !(pts[1] > 70 && pts[1] < 110)) {
+					pts.clear();
+					cout << "WRONG PLACE" <<endl;
+				} else return pts[0];
+			default:
+				break;
+		}
+	}
+	return 0;
 }
 

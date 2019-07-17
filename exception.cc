@@ -48,7 +48,7 @@ string OutOfBoundsException::what() {
 NoPieceSelectedException::NoPieceSelectedException() {}
 
 string NoPieceSelectedException::what() {
-    return "No piece selected to move.";
+    return "No piece selected.";
 }
 
 // Wrong Piece Selected Exception
