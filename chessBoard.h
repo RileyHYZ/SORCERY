@@ -15,6 +15,7 @@ class ChessBoard {
     const int NUM_COLS;
     std::vector<std::vector<Square> > board;
     std::vector<std::unique_ptr<ChessPiece> > pieces;
+    std::vector<Point> cardLocations;
     std::unordered_map<Card, int, Card::CardHash> numCards;
     std::unordered_map<Color, int, Color::ColorHash> hp;
     std::unordered_map<Color, char, Color::ColorHash> defaultPromotionPieces;

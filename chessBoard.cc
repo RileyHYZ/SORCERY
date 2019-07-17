@@ -29,6 +29,13 @@ ChessBoard::ChessBoard(int numRows, int numCols) : NUM_ROWS{numRows}, NUM_COLS{n
     initPieces(Color::WHITE);
     initPieces(Color::BLACK);
 
+    // Init card locations
+    for (int i = 2; i < NUM_ROWS - 2; i++) {
+        for (int j = 0; j < NUM_COLS; j++) {
+            cardLocations.emplace_back(Point{i, j});
+        }
+    }
+
     // Init number of each card
     numCards = {
         make_pair(Card::PLUSONEHP, 4),
@@ -112,11 +119,9 @@ void ChessBoard::initCards() {
     }
 
     int ind = 0;
-    for (int i = 2; i < NUM_ROWS - 2; i++) {
-        for (int j = 0; j < NUM_COLS; j++) {
-            board.at(i).at(j).setCard(cardList.at(rand[ind]));
-            ind++;
-        }
+    for (Point &p : cardLocations) {
+        board.at(p.getX()).at(p.getY()).setCard(cardList.at(rand[ind]));
+        ind++;
     }
 }
 

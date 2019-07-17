@@ -151,7 +151,7 @@ char Pawn::displayIcon() {
 bool Pawn::isValidMove(Point& curPos, Point& newPos, bool capture) {
     int incr = getColor() == Color::WHITE ? 1 : -1;
     bool forwardOne = newPos.getX() == curPos.getX() + incr && newPos.getY() == curPos.getY();
-    return (capture && isDiagonalMove(curPos, newPos, 1)) || forwardOne; 
+    return (capture && isDiagonalMove(curPos, newPos, 1)) || (!capture && forwardOne); 
 }
 
 vector<Point> Pawn::farthestValidMoves(Point& pos, Color player, int endRow, int endCol) {
