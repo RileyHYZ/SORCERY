@@ -1,5 +1,6 @@
 #include "keyboardController.h"
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -7,17 +8,19 @@ using namespace std;
 
 // Adapted from CS 247 Tutorial 9 code
 
-KeyboardController::KeyboardController(istream& in) : in{in} {
+// Constructor
+
+KeyboardController::KeyboardController(bool enhancementsOn, istream& in) : in{in}, enhancementsOn{enhancementsOn} {
     commandMap["move"] = Command::MOVE;
     commandMap["restart"] = Command::RESTART;
     commandMap["defaultpromotion"] = Command::DEFAULTPROMOTION;
     commandMap["validmoves"] = Command::VALIDMOVES;
-    commandMap["enhancementson"] = Command::ENHANCEMENTSON;
-    commandMap["enhancementsoff"] = Command::ENHANCEMENTSOFF;
     commandMap["quit"] = Command::QUIT;
 }
 
-Command KeyboardController::command(){
+// Private Helper Methods
+
+Command KeyboardController::command() {
     string input;
 
     if (in >> input) {
@@ -27,21 +30,34 @@ Command KeyboardController::command(){
             in >> oldCmd >> newCmd;
             remap(oldCmd, newCmd);
             return Command::NONE;
+        } else if (input == "enhancements") {
+            string status;
+            in >> status;
+            enhancementsOn = status == "on" ? true : false;
+            return Command::NONE;
         }
 
-        // Can find command in the map
+        // Try to find command in map
         vector<Command> matchingCommands;
 
         for (auto kvp : commandMap) {
             // Command entirely matches
-            if (input == kvp.first) return kvp.second;
+            if (input == kvp.first) {
+                if (!enhancementsOn && kvp.second == Command::VALIDMOVES) return Command::INVALID;
+                else return kvp.second;
+            }
 
             // Command partially matches
-            if (input.length() <= kvp.first.length() && kvp.first.compare(0, input.length(), input) == 0) matchingCommands.push_back(kvp.second);
+            if (input.length() <= kvp.first.length() && kvp.first.compare(0, input.length(), input) == 0) {
+                matchingCommands.push_back(kvp.second);
+            }
         }
 
         // Return command only if 1 match
-        if (matchingCommands.size() == 1) return matchingCommands.at(0);
+        if (matchingCommands.size() == 1) {
+            if (!enhancementsOn && matchingCommands.at(0) == Command::VALIDMOVES) return Command::INVALID;
+            else return matchingCommands.at(0);
+        }
     }
 
     // No input stream or command not found in map

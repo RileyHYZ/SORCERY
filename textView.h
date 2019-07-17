@@ -17,9 +17,8 @@ class TextView : public View {
 
   public:
     TextView(Game&, int, int, std::ostream& = std::cout);
-    // void update(const std::string& msg) override;
-    // void update(int row, int col, State state) override;
-    void updateView() override;
+    void displayMessage(const std::string&) override;
+    void displayView() override;
 };
 
 #endif

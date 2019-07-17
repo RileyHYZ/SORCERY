@@ -1,5 +1,3 @@
-#include <memory>
-
 #include "square.h"
 #include "chessPiece.h"
 #include "card.h"
@@ -7,7 +5,9 @@
 
 using namespace std;
 
-// Public Methods
+// Constructor
+
+Square::Square(ChessPiece* p, Card c, Color co) : piece{p}, card{c}, color{co}, valid{false} {}
 
 // Accessors
 
@@ -40,9 +40,3 @@ void Square::setCard(Card c) {
 void Square::setValid(bool v) {
     valid = v;
 }
-
-// Constructor
-
-// this will change depending on how you want to initialize the board, if 
-// initialize all at once or initialize squares first, then put pieces/cards in
-Square::Square(ChessPiece* p, Card c, Color co) : piece{p}, card{c}, color{co}, valid{false} {}

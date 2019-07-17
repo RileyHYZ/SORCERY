@@ -6,14 +6,14 @@
 class SorceryException {
   public:
     SorceryException();
-    virtual ~SorceryException();
+    virtual ~SorceryException() = default;
     virtual std::string what() = 0;
 };
 
 class InvalidMoveException : public SorceryException {
   public:
     InvalidMoveException();
-    virtual ~InvalidMoveException();
+    virtual ~InvalidMoveException() = default;
 };
 
 class InvalidDefaultPromotionPieceException : public SorceryException {
@@ -34,15 +34,9 @@ class OutOfBoundsException : public InvalidMoveException {
     std::string what();
 };
 
-class NoPieceSelectedException : public InvalidMoveException {
+class InvalidSquareSelectionException : public InvalidMoveException {
   public:
-    NoPieceSelectedException();
-    std::string what();
-};
-
-class WrongPieceSelectedException : public InvalidMoveException {
-  public:
-    WrongPieceSelectedException();
+    InvalidSquareSelectionException();
     std::string what();
 };
 

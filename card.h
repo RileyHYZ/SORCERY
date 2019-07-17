@@ -1,13 +1,12 @@
 #ifndef __CARD_H__
 #define __CARD_H__
 
-#include <iostream>
 #include <string>
 
 class Card {
   public:
     enum Value {
-        BLANK, 
+        BLANK = 0, 
         CURSE, 
         ENCHANTMENT, 
         FIRECOLUMN, 
@@ -21,11 +20,15 @@ class Card {
     Card(Value = NONE);
 
     Value getValue();
-    std::string getName();
+    std::string getName() const;
     std::string getDescription();
 
-    bool operator==(const Card&);
-    bool operator!=(const Card&);
+    bool operator==(const Card&) const;
+    bool operator!=(const Card&) const;
+
+    struct CardHash {
+        size_t operator()(const Card&) const;
+    };
 
   private:
     Value v;

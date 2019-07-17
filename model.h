@@ -16,16 +16,14 @@ class Model {
     std::unique_ptr<Controller> controller;
 
   protected:
-    void addView(std::unique_ptr<View> v);
-    void addController(std::unique_ptr<Controller> v);
-    bool hasController();
+    void addView(std::unique_ptr<View>);
+    void addController(std::unique_ptr<Controller>);
 
   public:
     Model();
     virtual ~Model() = default;
-//   void updateViews(int, int, State);
-//   void updateViews(const std::string& s);
     Command getCommand();
+    void displayMessage(const std::string&);
     void displayViews();
 };
 
