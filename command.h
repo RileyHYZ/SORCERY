@@ -6,8 +6,6 @@ enum class Command {
     RESTART,
     DEFAULTPROMOTION,
     VALIDMOVES,
-    ENHANCEMENTSON,
-    ENHANCEMENTSOFF,
     QUIT,
     NONE,
     INVALID
