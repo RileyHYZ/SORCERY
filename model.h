@@ -18,13 +18,11 @@ class Model {
   protected:
     void addView(std::unique_ptr<View>);
     void addController(std::unique_ptr<Controller>);
-    bool hasController();
 
   public:
     Model();
     virtual ~Model() = default;
-//   void updateViews(int, int, State);
-    void displayMessage(const std::string& s);
+    void displayMessage(const std::string&);
     Command getCommand();
     Point& getPoint();
     char getPromotPiece();

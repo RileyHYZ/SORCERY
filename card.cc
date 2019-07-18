@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "card.h"
 
 using namespace std;
@@ -14,7 +12,7 @@ Card::Value Card::getValue() {
     return v;
 }
 
-string Card::getName() {
+string Card::getName() const {
     switch (v) {
         case Card::BLANK:
             return "BLANK";
@@ -62,10 +60,16 @@ string Card::getDescription() {
 
 // Overloaded equality/inequality operators
 
-bool Card::operator==(const Card& c) {
+bool Card::operator==(const Card& c) const {
     return v == c.v;
 }
 
-bool Card::operator!=(const Card& c) {
+bool Card::operator!=(const Card& c) const {
     return v != c.v;
+}
+
+// Hash for card
+
+size_t Card::CardHash::operator()(const Card& c) const {
+    return hash<int>()(c.v);
 }

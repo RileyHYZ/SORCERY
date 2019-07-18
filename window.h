@@ -36,6 +36,9 @@ public:
 	// Clear window
 	void clearWindow();
 
+	// Clear area
+	void clearArea(int x, int y, int width, int height);
+
 	// return points
 	std::vector<int> getPointSelected();
 
@@ -43,7 +46,7 @@ public:
 	std::vector<int> getSelectedCommand();
 
 	// return selected promotion piece
-	char getSelectedPiece();
+	int getSelectedPiece();
 };
 
 #endif

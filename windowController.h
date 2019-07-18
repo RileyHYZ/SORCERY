@@ -10,15 +10,15 @@
 #include <vector>
 
 class WindowController : public Controller {
-		Game& model;
 		Xwindow& window;
+		bool enhancementsOn;
 
 		Command command() override;
 		Point& point() override;
 		char piece() override;
 
 	public:
-		WindowController(Game&, Xwindow&);
+		WindowController(Xwindow&, bool);
 };
 
 #endif

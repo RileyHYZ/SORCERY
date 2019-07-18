@@ -8,6 +8,11 @@
 
 using namespace std;
 
+// Constructor
+
+TextView::TextView(Game& model, int numRows, int numCols, ostream& out) : model{model}, numRows{numRows}, \
+    numCols{numCols}, out{out} {}
+
 // Private Helper Methods
 
 void TextView::outputHP(int hp) {
@@ -17,18 +22,12 @@ void TextView::outputHP(int hp) {
     out << endl;
 }
 
-// Constructor
+// Public Interface Methods
 
-TextView::TextView(Game& model, int numRows, int numCols, ostream& out) : model{model}, numRows{numRows}, \
-    numCols{numCols}, out{out} {}
-
-// Public Methods
-
-void TextView::updateView() {
+void TextView::displayView() {
     ChessBoard* board = model.getChessBoard();
-    unordered_map<Color, int> hp = board->getHP();
 
-    outputHP(hp.at(Color::BLACK));
+    outputHP(board->getPlayerHP(Color::BLACK));
     
     int col = 0;
     int row = numRows;
@@ -50,7 +49,7 @@ void TextView::updateView() {
         
         // Piece exists at that square
         else if (square.getPiece() != nullptr) {
-            out << square.getPiece()->getViewIcon();
+            out << square.getPiece()->getDisplayIcon();
         } 
         
         // Output correct square color
@@ -69,26 +68,16 @@ void TextView::updateView() {
 
     // Output file
     out << "   ";
-    for (char i = 'A'; i < 'I'; ++i) {
+    for (char i = 'A'; i < 'A' + numCols; ++i) {
         out << i << " ";
     }
     out << endl;
 
-    outputHP(hp.at(Color::WHITE));
+    outputHP(board->getPlayerHP(Color::WHITE));
 
-    if (!model.showingValidMoves()) {
-        if (model.getLastCardApplied() != Card::NONE) {
-            out << "The card that was played in this turn was " << model.getLastCardApplied().getName() << ". " << model.getLastCardApplied().getDescription() << endl;
-        } else {
-            out << "No card was played in this turn." << endl;
-        }
-        if (model.getWinner() == Color::WHITE) {
-            out << "The white player wins!" << endl;
-        } else if (model.getWinner() == Color::BLACK) {
-            out << "The black player wins!" << endl;
-        } else if (model.isTie()) {
-            out << "The game ends in a tie." << endl;
-        }
+    // Output last card applied
+    if (model.getCardApplied() != Card::NONE) {
+        out << "The card that was played in this turn was " << model.getCardApplied().getName() << ". " << model.getCardApplied().getDescription() << endl;
     }
 }
 

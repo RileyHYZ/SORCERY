@@ -11,6 +11,7 @@
 class Game;
 
 class GraphicalView : public View {
+	int numCols;
     Game& model;
 	std::unique_ptr<Xwindow> window;
 
@@ -21,9 +22,9 @@ class GraphicalView : public View {
 	void drawCommandButtons();
 
   public:
-	GraphicalView(Game&);
+	GraphicalView(Game&, int);
 
-	void updateView() override;
+	void displayView() override;
 	void displayMessage(const std::string& msg) override;
 	Xwindow& getWindow();
 };

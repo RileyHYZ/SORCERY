@@ -4,8 +4,6 @@
 #include "command.h"
 #include "point.h"
 
-#include <string>
-
 // Adapted from CS 247 Tutorial 9 code
 
 class Controller {

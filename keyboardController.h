@@ -12,6 +12,7 @@
 class KeyboardController : public Controller {
     std::istream& in;
     std::unordered_map<std::string, Command> commandMap;
+    bool enhancementsOn;
   
     Command command() override;
     Point& point() override;
@@ -20,7 +21,7 @@ class KeyboardController : public Controller {
     void remap(const std::string&, const std::string&);
 
   public:
-    KeyboardController(std::istream& = std::cin);
+    KeyboardController(bool, std::istream&);
 };
 
 #endif

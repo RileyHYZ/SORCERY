@@ -11,8 +11,76 @@
 
 using namespace std;
 
+// Constructor
+
+ChessBoard::ChessBoard(int numRows, int numCols) : NUM_ROWS{numRows}, NUM_COLS{numCols} {
+    // Init board
+    for (int i = 0; i < NUM_ROWS; ++i) {
+        vector<Square> v;
+        
+        for (int j = 0; j < NUM_COLS; ++j) {
+            v.emplace_back(Square{nullptr, Card::NONE, (i + j) % 2 == 0 ? Color::BLACK : Color::WHITE});
+        }
+
+        board.emplace_back(v);
+    }
+
+    // Init pieces and cards
+    initPieces(Color::WHITE);
+    initPieces(Color::BLACK);
+
+    // Init card locations
+    for (int i = 2; i < NUM_ROWS - 2; i++) {
+        for (int j = 0; j < NUM_COLS; j++) {
+            cardLocations.emplace_back(Point{i, j});
+        }
+    }
+
+    // Init number of each card
+    numCards = {
+        make_pair(Card::PLUSONEHP, 4),
+        make_pair(Card::DESTRUCTION, 3),
+        make_pair(Card::ENCHANTMENT, 6),
+        make_pair(Card::BLANK, 9),
+        make_pair(Card::FIRECOLUMN, 5),
+        make_pair(Card::MOAT, 2),
+        make_pair(Card::CURSE, 2),
+        make_pair(Card::RESURRECTION, 1)
+    };
+
+    initCards();
+
+    // Init hp
+    hp[Color::WHITE] = 2;
+    hp[Color::BLACK] = 2;
+
+    // Init default promotion pieces
+    defaultPromotionPieces[Color::WHITE] = 'q';
+    defaultPromotionPieces[Color::BLACK] = 'q';
+}
+
+// Accessors
+
+int ChessBoard::getPlayerHP(Color color) {
+    return hp.at(color);
+}
+
+// Mutators
+
+void ChessBoard::setDefaultPromotionPiece(Color player, char piece) { 
+    piece = tolower(piece);
+
+    if (!(piece == 'q' || piece == 'r' || piece == 'b' || piece == 'n')) {
+        throw InvalidDefaultPromotionPieceException();
+    }
+
+    defaultPromotionPieces.at(player) = piece;
+}
+
+// Private helper methods
+
 void ChessBoard::initPieces(Color c) {
-    for(int i = 0; i < 8; i++) {
+    for(int i = 0; i < NUM_COLS; i++) {
         // Initialize pawn
         pieces.emplace_back(make_unique<Pawn>(c));
         board.at(c == Color::WHITE ? 1 : 6).at(i).setPiece(pieces.back().get());
@@ -39,32 +107,22 @@ void ChessBoard::initPieces(Color c) {
 
 void ChessBoard::initCards() {
     vector<int> rand(32);
-    iota(rand.begin(), rand.end(), 1);
+    iota(rand.begin(), rand.end(), 0);
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     shuffle(rand.begin(), rand.end(), default_random_engine{seed});
 
-    int ind = 0;
-    for (int i = 2; i < 6; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (rand[ind] < 4) {
-                board.at(i).at(j).setCard(Card::PLUSONEHP);
-            } else if(rand[ind] >= 4 && rand[ind] < 7) {
-                board.at(i).at(j).setCard(Card::DESTRUCTION);
-            } else if(rand[ind] >= 7 && rand[ind] < 13) {
-                board.at(i).at(j).setCard(Card::ENCHANTMENT);
-            } else if(rand[ind] >= 13 && rand[ind] < 22) {
-                board.at(i).at(j).setCard(Card::BLANK);
-            } else if(rand[ind] >= 22 && rand[ind] < 27) {
-                board.at(i).at(j).setCard(Card::FIRECOLUMN);
-            } else if(rand[ind] >= 27 && rand[ind] < 29) {
-                board.at(i).at(j).setCard(Card::MOAT);
-            } else if(rand[ind] >= 29 && rand[ind] < 31) {
-                board.at(i).at(j).setCard(Card::CURSE);
-            } else {
-                board.at(i).at(j).setCard(Card::RESURRECTION);
-            }
-            ind++;
+    vector<Card> cardList;
+
+    for (auto &kvp : numCards) {
+        for (int i = 0; i < kvp.second; ++i) {
+            cardList.push_back(kvp.first);
         }
+    }
+
+    int ind = 0;
+    for (Point &p : cardLocations) {
+        board.at(p.getX()).at(p.getY()).setCard(cardList.at(rand[ind]));
+        ind++;
     }
 }
 
@@ -79,13 +137,13 @@ void ChessBoard::checkMakeMove(Point& curPos, Point& newPos, Color player) {
     ChessPiece* capturedPiece = board.at(newPos.getX()).at(newPos.getY()).getPiece();
 
     // Check that valid piece was selected
-    validPieceSelected(piece, player);
+    if (!validPieceSelected(piece, player)) throw InvalidSquareSelectionException{};
 
     // Check for invalid move for that piece type
     if (!piece->checkValidMove(curPos, newPos, capturedPiece != nullptr)) throw InvalidPieceMovementException();
 
     // Check for blocked path
-    vector<Point> v = piece->getPiecePath(curPos, newPos);
+    vector<Point> v = piece->getPath(curPos, newPos);
     
     for (Point p : v) {
         ChessPiece* pi = board.at(p.getX()).at(p.getY()).getPiece();
@@ -98,13 +156,7 @@ bool ChessBoard::isWithinBounds(Point& pos) {
 }
 
 bool ChessBoard::validPieceSelected(ChessPiece* p, Color player) {
-    // Check that there is a piece selected
-    if (p == nullptr) throw NoPieceSelectedException();
-
-    // Check that the right player's piece is selected
-    if (p->getColor() != player) throw WrongPieceSelectedException();
-
-    return true;
+    return p != nullptr && p->getColor() == player;
 }
 
 void ChessBoard::removePieceAt(Square& s) {
@@ -119,68 +171,7 @@ void ChessBoard::removePieceAt(Square& s) {
     }
 }
 
-// Constructor
-
-ChessBoard::ChessBoard() : NUM_ROWS{8}, NUM_COLS{8} {
-    // Init board
-    vector<vector<Square> > tmp;
-    board = tmp;
-
-    for (int i = 0; i < NUM_ROWS; ++i) {
-        vector<Square> v;
-        
-        for (int j = 0; j < NUM_COLS; ++j) {
-            Square s{nullptr, Card::NONE, (i + j) % 2 == 0 ? Color::BLACK : Color::WHITE};
-            v.emplace_back(s);
-        }
-
-        board.emplace_back(v);
-    }
-
-    // Init pieces and cards
-    initPieces(Color::WHITE);
-    initPieces(Color::BLACK);
-    initCards();
-
-    // Init hp
-    hp[Color::WHITE] = 2;
-    hp[Color::BLACK] = 2;
-
-    // Init default promotion pieces
-    defaultPromotionPieces[Color::WHITE] = 'q';
-    defaultPromotionPieces[Color::BLACK] = 'q';
-}
-
-// Accessors
-unordered_map<Color, int> ChessBoard::getHP() {
-    return hp;
-}
-
-Card ChessBoard::getCardAt(Point& p) {
-    return board.at(p.getX()).at(p.getY()).getCard();
-}
-
-// Mutators
-
-void ChessBoard::setCardAt(Point& p, Card c) {
-    board.at(p.getX()).at(p.getY()).setCard(c);
-}
-
-void ChessBoard::updateHP(Color player, int amount) {
-    hp.at(player) += amount;
-}
-
-void ChessBoard::setDefaultPromotionPiece(Color player, char piece) { 
-    piece = tolower(piece);
-
-    if (!(piece == 'q' || piece == 'r' || piece == 'b' || piece == 'n')) {
-        throw InvalidDefaultPromotionPieceException();
-    }
-
-    defaultPromotionPieces.at(player) = piece;
-}
-
-// Public Methods
+// Public Interface Methods
 
 void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
     checkMakeMove(curPos, newPos, player);
@@ -201,7 +192,7 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
         board.at(curPos.getX()).at(curPos.getY()).setPiece(nullptr);
 
         // Pawn promotion
-        if (dynamic_cast<Pawn*>(board.at(curPos.getX()).at(curPos.getY()).getPiece()) && ((player == Color::BLACK && newPos.getX() == 0) || (player == Color::WHITE && newPos.getX() == NUM_ROWS - 1))) {
+        if (dynamic_cast<Pawn*>(board.at(newPos.getX()).at(newPos.getY()).getPiece()) && ((player == Color::BLACK && newPos.getX() == 0) || (player == Color::WHITE && newPos.getX() == NUM_ROWS - 1))) {
             unique_ptr<ChessPiece> cp;
             switch (defaultPromotionPieces.at(player)) {
                 case 'q':
@@ -217,55 +208,54 @@ void ChessBoard::makeMove(Point& curPos, Point& newPos, Color player) {
                     cp = make_unique<Rook>(player);
                     break;
             }
-            board.at(newPos.getX()).at(newPos.getY()).setPiece(cp.get());
+            removePieceAt(board.at(newPos.getX()).at(newPos.getY())); // Remove pawn
+            board.at(newPos.getX()).at(newPos.getY()).setPiece(cp.get()); // Add new piece
             pieces.push_back(move(cp));
         }
     }   
 }
 
-bool diagMoveIsLegal(std::vector<std::vector<Square> >& board, int i, int j, int col) {
-    bool legal = false;
-    Color color = board[i][j].getPiece()->getColor();
-    if (j > 0 && board[i][j - 1].getPiece() != nullptr) {
-        legal = board[i][j - 1].getPiece()->getColor() == color;
-    }
-    if (j < col - 1 && board[i][j + 1].getPiece() != nullptr) {
-        return legal || board[i][j + 1].getPiece()->getColor() == color;
-    }
-    return legal;
-}
+bool ChessBoard::isAtStandstill() {
+    int whitePawns = 0;
+    int blackPawns = 0;
 
-bool ChessBoard::checkStandstill() {
-    int w = 0, b = 0;
-    if (pieces.size() == 4) {
-        for (int i = 0; i < 4; i++) {
-            if(pieces[i]->getType() == "pawn") {
-                if (pieces[i]->getColor() == Color::WHITE) w ++;
-                else b ++;
-            }
-        }
-        if (w == b && w == 1) {
-            for (int i = 0; i < NUM_ROWS - 1; i ++) {
-                for (int j = 0; j < NUM_COLS; j ++) {
-                    ChessPiece *cp1 = board[i][j].getPiece();
-                    ChessPiece *cp2 = board[i + 1][j].getPiece();
-                    if (cp1 != nullptr && cp2 != nullptr) {
-                        if (cp1->getType() == "pawn" && cp2->getType() == "pawn") {
-                            return !diagMoveIsLegal(board, i, j, NUM_COLS)
-                                            && !diagMoveIsLegal(board, i + 1, j, NUM_COLS);
-                        }
-                    }
-                }
-            }
+    if (!(pieces.size() == 4)) return false;
+
+    // Check that only pieces left are pawn and king
+    for (int i = 0; i < 4; i++) {
+        if (dynamic_cast<Pawn*>(pieces.at(i).get())) pieces.at(i)->getColor() == Color::WHITE ? ++whitePawns : ++blackPawns;
+        else if (!dynamic_cast<King*>(pieces.at(i).get())) return false;
+    }
+
+    // Check that there is only 1 white pawn and 1 black pawn
+    if (!(whitePawns == blackPawns && whitePawns == 1)) return false;
+
+    // Find the location of white and black pawns
+    Point whitePawnLoc;
+    Point blackPawnLoc;
+    for (int i = 0; i < NUM_ROWS; ++i) {
+        for (int j = 0; j < NUM_COLS; ++j) {
+            ChessPiece* cp = board.at(i).at(j).getPiece();
+            if (dynamic_cast<Pawn*>(cp)) cp->getColor() == Color::WHITE ? whitePawnLoc = Point{i, j} : blackPawnLoc = Point{i, j};
         }
     }
+
+    // Pawns are in same column and black pawn is directly in front of white pawn
+    if (whitePawnLoc.getY() == blackPawnLoc.getY() && whitePawnLoc.getX() + 1 == blackPawnLoc.getX()) return true;
+
     return false;
 }
 
-void ChessBoard::applyCardAt(Color player, Point& pos) {
-    Card c = board.at(pos.getX()).at(pos.getY()).getCard();
+Card ChessBoard::applyCardAt(Point& pos, Color player) {
+    Card card = board.at(pos.getX()).at(pos.getY()).getCard();
 
-    switch (c.getValue()) {
+    switch (card.getValue()) {
+        case Card::CURSE:
+            --hp.at(player == Color::WHITE ? Color::BLACK : Color::WHITE);
+            break;
+        case Card::PLUSONEHP:
+            ++hp.at(player);
+            break;
         case Card::FIRECOLUMN:
             {
                 int increment = player == Color::WHITE ? 1 : -1;
@@ -296,29 +286,42 @@ void ChessBoard::applyCardAt(Color player, Point& pos) {
             }
             break;
         case Card::RESURRECTION:
+            // Erase pieces of that color from the board
             for (vector<Square> &v : board) {
                 for (Square &s : v) {
                     if (s.getPiece() != nullptr && s.getPiece()->getColor() == player) {
-                        // Erase piece from vector and board
                         removePieceAt(s);
                     }
                 }
             }
+
+            // Remove pieces at initialization location
+            for (int i = player == Color::WHITE ? 0 : 6; i < (player == Color::WHITE ? 2 : NUM_ROWS); ++i) {
+                for (int j = 0; j < NUM_COLS; ++j) {
+                    removePieceAt(board.at(i).at(j));
+                }
+            }
+
             // Reinitialize pieces for that player
             initPieces(player);
             break;
         default:
             break;
     }
+
+    board.at(pos.getX()).at(pos.getY()).setCard(Card::NONE);
+    return card;
 }
 
-bool ChessBoard::armyIsAlive(Color color) {
+bool ChessBoard::armyIsAlive(Color player) {
     int count = 0;
+
     for(std::unique_ptr<ChessPiece>& cp: pieces) {
-        if(cp->getColor() == color) {
-            count++;
+        if (cp->getColor() == player) {
+            ++count;
         }
-        if(count >= 2) return true;
+
+        if (count >= 2) return true;
     }
     return false;
 }
@@ -327,7 +330,8 @@ void ChessBoard::markValidMoves(Point& pos, Color player, bool valid) {
     if (!isWithinBounds(pos)) throw OutOfBoundsException{};
 
     ChessPiece* piece = board.at(pos.getX()).at(pos.getY()).getPiece();
-    validPieceSelected(piece, player);
+    
+    if (!validPieceSelected(piece, player)) throw InvalidSquareSelectionException{};
 
     // Get valid moves for the piece
     vector<Point> validMoves = piece->getValidMoves(pos, player, NUM_ROWS - 1, NUM_COLS - 1);

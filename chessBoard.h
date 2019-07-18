@@ -15,8 +15,10 @@ class ChessBoard {
     const int NUM_COLS;
     std::vector<std::vector<Square> > board;
     std::vector<std::unique_ptr<ChessPiece> > pieces;
-    std::unordered_map<Color, int> hp;
-    std::unordered_map<Color, char> defaultPromotionPieces;
+    std::vector<Point> cardLocations;
+    std::vector<std::pair<Card, int>> numCards;
+    std::unordered_map<Color, int, Color::ColorHash> hp;
+    std::unordered_map<Color, char, Color::ColorHash> defaultPromotionPieces;
 
     void initPieces(Color);
     void initCards();
@@ -26,17 +28,15 @@ class ChessBoard {
     void removePieceAt(Square&);
 
   public:
-    ChessBoard();
+    ChessBoard(int, int);
 
-    std::unordered_map<Color, int> getHP();
-    Card getCardAt(Point&);
-    void setCardAt(Point&, Card);
+    int getPlayerHP(Color);
+    
     void setDefaultPromotionPiece(Color, char);
 
-    void updateHP(Color, int);
 		void makeMove(Point&, Point&, Color);
-		bool checkStandstill();
-		void applyCardAt(Color, Point&);
+    Card applyCardAt(Point&, Color);
+		bool isAtStandstill();
     bool armyIsAlive(Color);
     void markValidMoves(Point&, Color, bool);
 

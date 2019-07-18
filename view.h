@@ -10,9 +10,8 @@ class Game;
 class View {
   public:
     virtual ~View() = default;
-    virtual void displayMessage(const std::string& msg) = 0;
-    // virtual void update(int row, int col, State state) = 0;
-    virtual void updateView() = 0;
+    virtual void displayMessage(const std::string&) = 0;
+    virtual void displayView() = 0;
 };
 
 #endif

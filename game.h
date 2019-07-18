@@ -8,31 +8,28 @@
 #include "point.h"
 
 #include <memory>
+#include <iostream>
 
 class Game : public Model {
+    const int NUM_ROWS;
+    const int NUM_COLS;
+
     std::unique_ptr<ChessBoard> chessBoard;
 		Color curPlayer;
-    Card lastCardApplied;
-    Color winner;
-    bool tie;
-    bool validMoves; // showing valid moves
+    Card cardApplied;
 
+    bool playTurn(Point& curPos, Point& newPos);
     bool checkWin();
+    void showValidMoves(Point&);
+    void restart();
 
   public:
-    Game(bool = false);
+    Game(bool, bool, bool, std::istream& = std::cin, int = 8, int = 8);
 
     ChessBoard* getChessBoard();
-    Card getLastCardApplied();
-    Color getWinner();
-    bool isTie();
-    bool showingValidMoves();
-
-    void setDefaultPromotionPiece(char);
+    Card getCardApplied();
 
     void start(); // Game loop
-		bool playTurn(Point&, Point&);
-    void showValidMoves(Point&);
 };
 
 #endif

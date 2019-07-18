@@ -14,14 +14,16 @@
 using namespace std;
 
 // Constructor
-
-Game::Game(bool textOnly) : chessBoard{make_unique<ChessBoard>()}, curPlayer{Color::WHITE}, lastCardApplied{Card::NONE}, winner{Color::NONE}, tie{false}, validMoves{false}  {
-    addController(move(make_unique<KeyboardController>()));
-    // TODO MICHELLE: Update the numbers to variables
-    addView(move(make_unique<TextView>(*this, 8, 8)));
+    
+Game::Game(bool textOnly, bool graphicOnly, bool enhancementsOn, istream& in, int numRows, int numCols) : NUM_ROWS{numRows}, NUM_COLS{numCols}, 
+    chessBoard{make_unique<ChessBoard>(numRows, numCols)}, curPlayer{Color::WHITE}, cardApplied{Card::NONE} {   
+    if (!graphicOnly) {
+        addController(move(make_unique<KeyboardController>(enhancementsOn, in)));
+        addView(move(make_unique<TextView>(*this, numRows, numCols)));
+    }
     if (!textOnly) {
-            unique_ptr<GraphicalView> g = make_unique<GraphicalView>(*this);
-        addController(move(make_unique<WindowController>(*this, g->getWindow())));
+        unique_ptr<GraphicalView> g = make_unique<GraphicalView>(*this, numCols);
+        addController(move(make_unique<WindowController>(g->getWindow(), enhancementsOn)));
         addView(move(g));
     }
 }
@@ -32,23 +34,67 @@ ChessBoard* Game::getChessBoard() {
     return chessBoard.get();
 }
 
-Card Game::getLastCardApplied() {
-    return lastCardApplied;
+Card Game::getCardApplied() {
+    return cardApplied;
 }
 
-Color Game::getWinner() {
-    return winner;
+// Private Methods
+
+bool Game::playTurn(Point& curPos, Point& newPos) {
+    chessBoard->makeMove(curPos, newPos, curPlayer);
+    cardApplied = chessBoard->applyCardAt(newPos, curPlayer);
+
+    // Notify observers to display screen
+    displayViews();
+
+    // Check for winner
+    bool gameEnded = checkWin();
+
+    // Switch turn if ENCHANTMENT card not applied
+    if (!(cardApplied == Card::ENCHANTMENT)) curPlayer = curPlayer == Color::WHITE ? Color::BLACK : Color::WHITE;
+
+    // Reset card applied
+    cardApplied = Card::NONE;
+
+    return gameEnded;
 }
 
-bool Game::isTie() {
-    return tie;
+bool Game::checkWin() {
+    Color opponent = curPlayer == Color::WHITE ? Color::BLACK : Color::WHITE;
+
+    if (chessBoard->getPlayerHP(opponent) <= 0 || !chessBoard->armyIsAlive(opponent)) {
+        displayMessage("The " + curPlayer.getName() + " player wins!");
+        return true;
+    }
+
+    if (chessBoard->isAtStandstill()) {
+        if (chessBoard->getPlayerHP(opponent) > chessBoard->getPlayerHP(curPlayer)) {
+            displayMessage("The " + opponent.getName() + " player wins!");
+        } else if (chessBoard->getPlayerHP(curPlayer) > chessBoard->getPlayerHP(opponent)) {
+            displayMessage("The " + curPlayer.getName() + " player wins!");
+        } else {
+            displayMessage("It's a tie!");
+        }
+        return true;
+    }
+    
+    return false;
 }
 
-bool Game::showingValidMoves() {
-    return validMoves;
+void Game::showValidMoves(Point& pos) {
+    chessBoard->markValidMoves(pos, curPlayer, true);
+    displayViews();
+    chessBoard->markValidMoves(pos, curPlayer, false);
+} 
+
+void Game::restart() {
+    chessBoard = make_unique<ChessBoard>(NUM_ROWS, NUM_COLS);
+    curPlayer = Color::WHITE;
+    cardApplied = Card::NONE;
+    displayViews();
 }
 
-// Public Methods
+// Public Interface Methods
 
 void Game::start() {
     displayViews(); // Initial display
@@ -56,19 +102,17 @@ void Game::start() {
     string str;
 
     Command cmd;
-    bool enhancementsOn = false;
 
     while (cin) {
-        cmd = getCommand();
+        try{
+            cmd = getCommand();
+        } catch (InvalidCommandException& e) {
+            displayMessage(e.what());
+        }
 
-        // TODO MICHELLE: Decide what to do about reading from cin
-        // TODO MICHELLE: Modify all exceptions to update views
         if (cmd == Command::QUIT) {
             break;
         } else if (cmd == Command::NONE) {
-            continue;
-        } else if (cmd == Command::INVALID) { // TODO MICHELLE: modify this to update views
-            displayMessage("Invalid command.");
             continue;
         } else if (cmd == Command::MOVE) {
             Point curPos = getPoint();
@@ -77,21 +121,22 @@ void Game::start() {
 
             try {
                 end = playTurn(curPos, newPos);
-                if (end) break; // TODO MICHELLE: Is there a more elegant way of doing this?
+                if (end) break;
             } catch (InvalidMoveException& e) {
                 displayMessage(e.what());
             }
         } else if (cmd == Command::RESTART) {
-            // TODO MICHELLE: RESTART GAME
+            restart();
         } else if (cmd == Command::DEFAULTPROMOTION) {
             char piece = getPromotPiece();
             
             try {
-                setDefaultPromotionPiece(piece);
+                cout<<"SELECTED   "<<piece<<endl;
+                chessBoard->setDefaultPromotionPiece(curPlayer, piece);
             } catch (InvalidDefaultPromotionPieceException& e) {
                 displayMessage(e.what());
             }
-        } else if (enhancementsOn && cmd == Command::VALIDMOVES) {
+        } else if (cmd == Command::VALIDMOVES) {
             Point pos = getPoint();
             
             try {
@@ -99,78 +144,6 @@ void Game::start() {
             } catch (InvalidMoveException& e) {
                 displayMessage(e.what());
             }
-        } else if (cmd == Command::ENHANCEMENTSON) {
-            enhancementsOn = true;
-        } else if (cmd == Command::ENHANCEMENTSOFF) {
-            enhancementsOn = false;
         }
     }
-}
-
-void Game::setDefaultPromotionPiece(char piece) {
-    chessBoard->setDefaultPromotionPiece(curPlayer, piece);
-}
-
-bool Game::playTurn(Point& curPos, Point& newPos) {
-    chessBoard->makeMove(curPos, newPos, curPlayer);
-    lastCardApplied = chessBoard->getCardAt(newPos);
-    switch (lastCardApplied.getValue()) {
-        case Card::CURSE:
-            chessBoard->updateHP(curPlayer == Color::WHITE ? Color::BLACK : Color::WHITE, -1);
-            break;
-        case Card::PLUSONEHP:
-            chessBoard->updateHP(curPlayer, 1);
-            break;
-        case Card::FIRECOLUMN:
-        case Card::MOAT:
-        case Card::DESTRUCTION:
-        case Card::RESURRECTION:
-            chessBoard->applyCardAt(curPlayer, newPos);
-            break;
-        default:
-            break;
-    }
-    chessBoard->setCardAt(newPos, Card::NONE);
-
-    // Check for winner
-    bool gameEnded = checkWin();
-
-    // Switch turn if ENCHANTMENT card not applied
-    if (!(lastCardApplied == Card::ENCHANTMENT)) curPlayer = curPlayer == Color::WHITE ? Color::BLACK : Color::WHITE;
-
-    // Notify observers to display screen
-    displayViews();
-
-    return gameEnded;
-}
-
-void Game::showValidMoves(Point& pos) {
-    chessBoard->markValidMoves(pos, curPlayer, true);
-    validMoves = true;
-    displayViews();
-    chessBoard->markValidMoves(pos, curPlayer, false);
-    validMoves = false;
-} 
-
-bool Game::checkWin() {
-    Color opponent = curPlayer == Color::WHITE ? Color::BLACK : Color::WHITE;
-    unordered_map<Color, int> hp = chessBoard->getHP();
-    
-    if(hp.at(opponent) <= 0 || !chessBoard->armyIsAlive(opponent)){
-        winner = curPlayer;
-        return true;
-    }
-
-    if(chessBoard->checkStandstill()) {
-        if (hp.at(opponent) > hp.at(curPlayer)) {
-            winner = opponent;
-        } else if (hp.at(opponent) == hp.at(curPlayer)) {
-            tie = true;
-        } else {
-            winner = curPlayer;
-        }
-        return true;
-    }
-    
-    return false;
 }

@@ -158,20 +158,23 @@ void Xwindow::clearWindow() {
 	XFlush(d);
 }
 
+void Xwindow::clearArea(int x, int y, int width, int height) {
+	XClearArea(d, w, x, y, width, height, 0);
+	XFlush(d);
+}
+
 vector<int> Xwindow::getPointSelected() {
 	vector<int> pts;
 	while(1) {
 		XNextEvent(d, &event);
 		switch (event.type){
 			case ButtonPress:
-				cout << "SELECT MOVE" << endl;
 				pts.emplace_back(event.xbutton.x);
 				pts.emplace_back(event.xbutton.y);
 				cout<<"X: "<<event.xbutton.x<<" Y:"<<event.xbutton.y << endl;
 				XFlush(d);
 				if (pts[0] < 390 || pts[0] > 710 || pts[1] < 90 || pts[1] > 410) {
 					pts.clear();
-					cout << "WRONG PLACE" <<endl;
 				} else return pts;
 			default:
 				break;
@@ -190,13 +193,15 @@ vector<int> Xwindow::getSelectedCommand() {
 				pts.emplace_back(event.xbutton.x);
 				pts.emplace_back(event.xbutton.y);
 				XFlush(d);
-				if (!(pts[1] > 40 && pts[1] < 63) && !(pts[0] > 65 && pts[0] < 95) && 
-					!(pts[0] > 100 && pts[0] < 150) && !(pts[0] > 155 && pts[0] < 195) && 
-					!(pts[0] > 200 && pts[0] < 280) && !(pts[1] > 73 && pts[1] < 96) 
-					&& !(pts[0] > 55 && pts[0] < 135)){
-						pts.clear();
-						cout << "WRONG PLACE" <<endl;
-				} else return pts;
+
+				if (!(pts[1] > 40 && pts[1] < 63 && pts[0] > 55 && pts[0] < 95) &&
+					!(pts[1] > 40 && pts[1] < 63 && pts[0] > 100 && pts[0] < 150) &&
+					!(pts[1] > 40 && pts[1] < 63 && pts[0] > 155 && pts[0] < 195) &&
+					!(pts[1] > 73 && pts[1] < 96 && pts[0] > 55 && pts[0] < 135) &&
+					!(pts[1] > 106 && pts[1] < 129 && pts[0] > 55 && pts[0] < 175) &&
+					!(pts[1] > 106 && pts[1] < 129 && pts[0] > 200 && pts[0] < 280)
+				) pts.clear();
+				else return pts;
 			default:
 				break;
 		}
@@ -204,19 +209,18 @@ vector<int> Xwindow::getSelectedCommand() {
 	return pts;
 }
 
-char Xwindow::getSelectedPiece() {
+int Xwindow::getSelectedPiece() {
 	vector<int> pts;
 	while(1) {
 		XNextEvent(d, &event);
 		switch (event.type){
 			case ButtonPress:
-				cout<<"PROMOTION SELECTION"<<endl;
+				cout << "SELECT PROMOT"<<endl;
 				pts.emplace_back(event.xbutton.x);
 				pts.emplace_back(event.xbutton.y);
 				XFlush(d);
 				if (!(pts[0] > 140 && pts[0] < 300) && !(pts[1] > 70 && pts[1] < 110)) {
 					pts.clear();
-					cout << "WRONG PLACE" <<endl;
 				} else return pts[0];
 			default:
 				break;

@@ -9,18 +9,17 @@ using namespace std;
 
 // Constructor
 
-GraphicalView::GraphicalView(Game& model) : model{model} {
+GraphicalView::GraphicalView(Game& model, int numCols) : numCols{numCols}, model{model} {
     window = move(make_unique<Xwindow>());
 }
 
 // Private Methods
 
 void GraphicalView::drawHP(ChessBoard* chessBoard) {
-    unordered_map<Color, int> hp = chessBoard->getHP();
-    for(int i = 0; i < hp.at(Color::WHITE); i++) {
+    for(int i = 0; i < chessBoard->getPlayerHP(Color::WHITE); i++) {
         window->fillRectangle(740 - 30 * i, 460, 20, 20, 2);
     }
-    for(int i = 0; i < hp.at(Color::BLACK); i++) {
+    for(int i = 0; i < chessBoard->getPlayerHP(Color::BLACK); i++) {
         window->fillRectangle(360 + 30 * i, 30, 20, 20, 2);
     }
 }
@@ -33,7 +32,7 @@ void GraphicalView::drawChessBoard(ChessBoard *chessBoard) {
             window->fillRectangle(390 + 40 * col, 90 + 40 * row, 40, 40);
         }
         col ++;
-        if (col == 8) {
+        if (col == numCols) {
             col = 0;
             row ++;
         }
@@ -45,17 +44,17 @@ void GraphicalView::drawChessPieces(ChessBoard *chessBoard) {
     for (Square& square : *chessBoard) {
         if (square.getPiece() != nullptr) {
             string path;
-            string name = square.getPiece()->getType();
+            string name = square.getPiece()->getName();
             if (square.getPiece()->getColor() == Color::BLACK) name = "b" + name;
             if (square.getColor() == Color::WHITE) path = "./pieces/" + name + ".png";
             else path = "./pieces/" + name + "2.png";
             window->putImage(395 + 40 * col, 95 + 40 * row, path.c_str());
         }
         if (square.isValid()){
-            window->fillRectangle(400 + 40 * col, 100 + 40 * row, 10, 10, 2);
+            window->fillRectangle(404 + 40 * col, 104 + 40 * row, 10, 10, 2);
         }
         col ++;
-        if (col == 8) {
+        if (col == numCols) {
             col = 0;
             row ++;
         }
@@ -65,7 +64,7 @@ void GraphicalView::drawChessPieces(ChessBoard *chessBoard) {
 void GraphicalView::updateAbilityCard(Card card) {
     if (card != Card::NONE) {
         string path = "./cards/" + card.getName()+".png";
-        window->putImage(70, 120, path.c_str());
+        window->putImage(70, 140, path.c_str());
     }
 }
 
@@ -78,8 +77,6 @@ void GraphicalView::drawCommandButtons() {
     window->drawString(104, 56, "RESTART");
     window->drawRectangle(155, 40, 40, 23);
     window->drawString(165, 56, "QUIT");
-    window->drawRectangle(200, 40, 80, 23);
-    window->drawString(210, 56, "VALID MOVE");//
     
     window->drawRectangle(55, 73, 80, 23);
     window->drawString(70, 90, "PROMOTION");
@@ -87,23 +84,29 @@ void GraphicalView::drawCommandButtons() {
     window->putImage(180,70,"./pieces/rook.png");
     window->putImage(220,70,"./pieces/bishop.png");
     window->putImage(260,70,"./pieces/knight.png");
+
+    window->drawRectangle(55, 106, 120, 23);
+    window->drawString(75, 123, "ENHANCEMENTS");
+    window->drawRectangle(200, 106, 80, 23);
+    window->drawString(210, 123, "VALID MOVE");
+
 }
 
 // Public Methods
 
-void GraphicalView::updateView() {
+void GraphicalView::displayView() {
     ChessBoard* board = model.getChessBoard();
     window->clearWindow();
 
     drawChessBoard(board);
     drawHP(board);
     drawChessPieces(board);
-    updateAbilityCard(model.getLastCardApplied());
+    updateAbilityCard(model.getCardApplied());
     drawCommandButtons();
 }
 
 void GraphicalView::displayMessage(const string& msg) {
-    window->fillRectangle(40, 420, 350, 30, 0);
+    window->clearArea(38, 418, 430, 22);
     window->drawString(40, 430, msg);
 }
 
