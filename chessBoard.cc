@@ -142,7 +142,7 @@ void ChessBoard::checkMakeMove(Point& curPos, Point& newPos, Color player) {
     if (curPos == newPos) throw DidNotMoveException();
 
     // Check for invalid move for that piece type
-    if (!piece->checkValidMove(curPos, newPos, capturedPiece != nullptr)) throw InvalidPieceMovementException();
+    if (!piece->checkValidMove(curPos, newPos, capturedPiece != nullptr && capturedPiece->getColor() != player)) throw InvalidPieceMovementException();
 
     // Check for blocked path
     vector<Point> v = piece->getPath(curPos, newPos);
