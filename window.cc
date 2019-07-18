@@ -149,6 +149,7 @@ void Xwindow::putImage(int x, int y, const char* filename) {
     png_destroy_read_struct(&pngPtr, &pngInfo, NULL);
 
 	XPutImage(d, w, gc, image, 0, 0, x, y, width, height);
+	XDestroyImage(image);
 	
 	fclose(file);
 	XFlush(d);
