@@ -3,6 +3,7 @@
 #include "color.h"
 #include "exception.h"
 
+#include <chrono>
 #include <numeric>
 #include <algorithm>
 #include <random>
@@ -121,6 +122,7 @@ void ChessBoard::initCards() {
 
     int ind = 0;
     for (Point &p : cardLocations) {
+        if (!isWithinBounds(p)) continue;
         board.at(p.getX()).at(p.getY()).setCard(cardList.at(rand[ind]));
         ind++;
     }

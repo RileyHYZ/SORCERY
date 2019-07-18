@@ -65,15 +65,15 @@ Command KeyboardController::command() {
     throw InvalidCommandException();
 }
 
-Point& KeyboardController::point() {
-    Point curPos{0,0};
-    if(cin >> curPos) return curPos;
-    return curPos;
+Point KeyboardController::point() {
+    Point point;
+    cin >> point;
+    return point;
 }
 
 char KeyboardController::piece() {
     char piece;
-    if(cin >> piece) return piece;
+    cin >> piece;
     return piece;
 }
 

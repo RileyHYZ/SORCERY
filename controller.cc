@@ -6,7 +6,7 @@ Command Controller::getCommand() {
     return command(); 
 }
 
-Point& Controller::getPoint() {
+Point Controller::getPoint() {
     return point();
 }
 

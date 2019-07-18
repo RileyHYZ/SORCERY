@@ -14,7 +14,7 @@ class WindowController : public Controller {
 		bool enhancementsOn;
 
 		Command command() override;
-		Point& point() override;
+		Point point() override;
 		char piece() override;
 
 	public:

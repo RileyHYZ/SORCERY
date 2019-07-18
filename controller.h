@@ -8,13 +8,13 @@
 
 class Controller {
     virtual Command command() = 0;
-    virtual Point& point() = 0;
+    virtual Point point() = 0;
     virtual char piece() = 0;
 
   public:
     virtual ~Controller() = default;
     Command getCommand();
-    Point& getPoint();
+    Point getPoint();
     char getPiece();
 };
 

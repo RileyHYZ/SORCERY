@@ -24,7 +24,7 @@ class Model {
     virtual ~Model() = default;
     void displayMessage(const std::string&);
     Command getCommand();
-    Point& getPoint();
+    Point getPoint();
     char getPromotPiece();
     void displayViews();
 };

@@ -15,7 +15,7 @@ class KeyboardController : public Controller {
     bool enhancementsOn;
   
     Command command() override;
-    Point& point() override;
+    Point point() override;
     char piece() override;
 
     void remap(const std::string&, const std::string&);

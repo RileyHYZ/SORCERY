@@ -39,7 +39,7 @@ Command Model::getCommand(){
     return controller->getCommand();
 }
 
-Point& Model::getPoint() {
+Point Model::getPoint() {
     return controller->getPoint();
 }
 

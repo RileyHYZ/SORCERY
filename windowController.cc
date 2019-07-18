@@ -22,7 +22,7 @@ Command WindowController::command() {
     return Command::QUIT;
 }
 
-Point& WindowController::point() {
+Point WindowController::point() {
     vector<int> position = window.getPointSelected();
     int y = (position[0] - 390) / 40;
     int x = (410 - position[1]) / 40;

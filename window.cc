@@ -2,6 +2,7 @@
 #include <X11/Xutil.h>
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include <unistd.h>
 #include <png.h>
