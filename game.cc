@@ -136,6 +136,7 @@ void Game::start() {
                 displayMessage(e.what());
             }
         } else if (cmd == Command::VALIDMOVES) {
+            displayMessage("");
             Point pos = getPoint();
             
             try {

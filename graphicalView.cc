@@ -107,7 +107,8 @@ void GraphicalView::displayView() {
 
 void GraphicalView::displayMessage(const string& msg) {
     window->clearArea(38, 418, 430, 22);
-    window->drawString(40, 430, msg);
+    if (msg.size() > 0)
+        window->drawString(40, 430, msg);
 }
 
 Xwindow& GraphicalView::getWindow() {

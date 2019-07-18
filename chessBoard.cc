@@ -129,9 +129,6 @@ void ChessBoard::initCards() {
 }
 
 void ChessBoard::checkMakeMove(Point& curPos, Point& newPos, Color player) {
-    // Check if same position
-    if (curPos == newPos) throw DidNotMoveException();
-
     // Check for out of bounds
     if (!isWithinBounds(curPos) || !isWithinBounds(newPos)) throw OutOfBoundsException();
 
@@ -140,6 +137,9 @@ void ChessBoard::checkMakeMove(Point& curPos, Point& newPos, Color player) {
 
     // Check that valid piece was selected
     if (!validPieceSelected(piece, player)) throw InvalidSquareSelectionException{};
+    
+    // Check if same position
+    if (curPos == newPos) throw DidNotMoveException();
 
     // Check for invalid move for that piece type
     if (!piece->checkValidMove(curPos, newPos, capturedPiece != nullptr)) throw InvalidPieceMovementException();

@@ -82,5 +82,6 @@ void TextView::displayView() {
 }
 
 void TextView::displayMessage(const string& msg) {
-    out << msg << endl;
+    if (msg.size() > 0)
+        out << msg << endl;
 }
