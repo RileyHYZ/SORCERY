@@ -1,6 +1,6 @@
-#include <string>
-
 #include "exception.h"
+
+#include <string>
 
 using namespace std;
 
@@ -9,14 +9,10 @@ using namespace std;
 
 SorceryException::SorceryException() {}
 
-SorceryException::~SorceryException() {}
-
 // Invalid Move Exception
 // Abstract base class for all exceptions thrown relating to moving a piece
 
 InvalidMoveException::InvalidMoveException() {}
-
-InvalidMoveException::~InvalidMoveException() {}
 
 // Invalid Default Promotion Piece Exception
 
@@ -24,6 +20,14 @@ InvalidDefaultPromotionPieceException::InvalidDefaultPromotionPieceException() {
 
 string InvalidDefaultPromotionPieceException::what() {
     return "Invalid default promotion piece selected. Can only select queen, bishop, knight or rook";
+}
+
+// Invalid Command Exception
+
+InvalidCommandException::InvalidCommandException() {}
+
+string InvalidCommandException::what() {
+    return "Invalid command.";
 }
 
 // Did Not Move Exception
@@ -43,20 +47,12 @@ string OutOfBoundsException::what() {
 }
 
 
-// No Piece Selected Exception
+// Invalid Square Selected Exception
 
-NoPieceSelectedException::NoPieceSelectedException() {}
+InvalidSquareSelectionException::InvalidSquareSelectionException() {}
 
-string NoPieceSelectedException::what() {
-    return "No piece selected to move.";
-}
-
-// Wrong Piece Selected Exception
-
-WrongPieceSelectedException::WrongPieceSelectedException() {}
-
-string WrongPieceSelectedException::what() {
-    return "Selected wrong player's piece";
+string InvalidSquareSelectionException::what() {
+    return "Invalid square selected. Square contains no piece or opponent's piece.";
 }
 
 // Blocked Path Exception

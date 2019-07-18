@@ -1,9 +1,12 @@
-#include <iostream>
 #include "point.h"
+
+#include <iostream>
 
 using namespace std;
 
-// Public Methods
+// Constructor
+
+Point::Point(int x, int y) : x{x}, y{y} {}
 
 // Accessors
 
@@ -15,10 +18,6 @@ int Point::getY() {
     return y;
 }
 
-// Constructor
-
-Point::Point(int x, int y) : x{x}, y{y} {}
-
 // Overloaded Equality/Inequality Operators
 
 bool Point::operator==(Point& p) {
@@ -26,22 +25,23 @@ bool Point::operator==(Point& p) {
 }
 
 bool Point::operator!=(Point& p) {
-    return !(*this == p);
+    return !(x == p.x && y == p.y);
 }
 
 // Overloaded Input/Output Operators
 
 istream& operator>>(istream& in, Point& p) {
-    int rank;
+    char rank;
     char file;
     in >> file >> rank;
 
-    p.x = rank - 1;
+    // assume rank starts from 1, file starts from a
+    p.x = rank - '1';
     p.y = file - 'a';
 
     return in;
 }
 
 ostream& operator<<(ostream& out, Point& p) {
-    return out << char(p.y + 'a') << p.x + 1 << endl;
+    return out << char(p.y + 'a') << p.x + 1;
 }

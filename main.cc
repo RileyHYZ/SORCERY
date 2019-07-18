@@ -1,44 +1,24 @@
-#include <iostream>
-
 #include "game.h"
-#include "display.h"
-#include "point.h"
-#include "exception.h"
+
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 
-int main(void) {
-    Game g;
-    TextDisplay t{&g, cout};
+// Adapted from CS 247 Tutorial 9 code
 
-    g.notifyObservers();
+int main(int argc, char* argv[]) {
+    bool textOnly = false;
+    bool graphicOnly = false;
+    bool enhancementsOn = false;
 
-    string cmd;
-
-    while (cin >> cmd && cmd != "q") {
-        if (cmd == "move") {
-            Point curPos;
-            Point newPos;
-            cin >> curPos >> newPos;
-
-            try {
-                g.playTurn(curPos, newPos);
-            } catch (InvalidMoveException& e) {
-                cerr << e.what() << endl;
-            }
-        } else if (cmd == "restart") {
-            g = Game();
-        } else if (cmd == "defaultpromotion") {
-            char piece;
-            cin >> piece;
-            
-            try {
-                g.setDefaultPromotionPiece(piece);
-            } catch (InvalidDefaultPromotionPieceException& e) {
-                cerr << e.what() << endl;
-            }
-        } else {
-            cout << "Invalid command: " << cmd << endl; 
-        }
+    for (int i = 1; i < argc; ++i) {
+        string arg = argv[i];
+        if (arg == "-text" && !graphicOnly) textOnly = true;
+        if (arg == "-enablebonus") enhancementsOn = true;
+        if (arg == "-graphic" && !textOnly) graphicOnly = true;
     }
+
+    Game g{textOnly, graphicOnly, enhancementsOn};
+    g.start();
 }

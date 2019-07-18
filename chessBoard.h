@@ -2,6 +2,7 @@
 #define __CHESSBOARD_H__
 
 #include <vector>
+#include <unordered_map>
 #include <memory>
 
 #include "square.h"
@@ -14,27 +15,30 @@ class ChessBoard {
     const int NUM_COLS;
     std::vector<std::vector<Square> > board;
     std::vector<std::unique_ptr<ChessPiece> > pieces;
-    std::vector<int> hp;
-    std::vector<char> defaultPromotionPieces; // white at 0, black at 1
+    std::vector<Point> cardLocations;
+    std::vector<std::pair<Card, int>> numCards;
+    std::unordered_map<Color, int, Color::ColorHash> hp;
+    std::unordered_map<Color, char, Color::ColorHash> defaultPromotionPieces;
 
     void initPieces(Color);
     void initCards();
+    void checkMakeMove(Point&, Point&, Color);
+    bool isWithinBounds(Point&);
+    bool validPieceSelected(ChessPiece*, Color);
     void removePieceAt(Square&);
 
   public:
-    ChessBoard();
+    ChessBoard(int, int);
 
-    std::vector<int> getHP();
-    Card getCardAt(Point&);
-    void setCardAt(Point&, Card);
+    int getPlayerHP(Color);
+    
     void setDefaultPromotionPiece(Color, char);
 
-    void updateHP(Color, int);
 		void makeMove(Point&, Point&, Color);
-		bool checkStandstill();
-		void applyCardAt(Color, Point&);
-    int getPlayerHp(Color);
+    Card applyCardAt(Point&, Color);
+		bool isAtStandstill();
     bool armyIsAlive(Color);
+    void markValidMoves(Point&, Color, bool);
 
     class Iterator {
         std::vector<std::vector<Square> > board;

@@ -1,33 +1,35 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#include<memory>
-
-#include "subject.h"
+#include "model.h"
 #include "chessBoard.h"
 #include "color.h"
+#include "card.h"
 #include "point.h"
 
-class Game : public Subject {
+#include <memory>
+#include <iostream>
+
+class Game : public Model {
+    const int NUM_ROWS;
+    const int NUM_COLS;
+
     std::unique_ptr<ChessBoard> chessBoard;
 		Color curPlayer;
-    Card lastCardApplied;
-    Color winner;
-    bool tie;
+    Card cardApplied;
 
+    bool playTurn(Point& curPos, Point& newPos);
     bool checkWin();
+    void showValidMoves(Point&);
+    void restart();
 
   public:
-    Game();
+    Game(bool, bool, bool, std::istream& = std::cin, int = 8, int = 8);
 
     ChessBoard* getChessBoard();
-    Card getLastCardApplied();
-    Color getWinner();
-    bool isTie();
+    Card getCardApplied();
 
-    void setDefaultPromotionPiece(char);
-
-		bool playTurn(Point&, Point&);
+    void start(); // Game loop
 };
 
 #endif
