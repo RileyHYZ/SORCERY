@@ -44,7 +44,7 @@ void TextView::displayView() {
         
         // Displaying valid moves
         if (square.isValid()) {
-            out << "·";
+            out << "●";
         } 
         
         // Piece exists at that square

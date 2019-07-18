@@ -99,8 +99,6 @@ void Game::restart() {
 void Game::start() {
     displayViews(); // Initial display
 
-    string str;
-
     Command cmd;
 
     while (cin) {
@@ -108,6 +106,7 @@ void Game::start() {
             cmd = getCommand();
         } catch (InvalidCommandException& e) {
             displayMessage(e.what());
+            continue;
         }
 
         if (cmd == Command::QUIT) {
